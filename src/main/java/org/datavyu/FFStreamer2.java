@@ -75,6 +75,7 @@ public class FFStreamer2 extends Application{
             BorderPane.setAlignment(mediaBar, Pos.CENTER);
 
             final Button playButton = new Button(">");
+            final Button fastForward = new Button(">>");
 
             playButton.setOnAction(e -> {
                 MediaPlayer.Status status = mp.getStatus();
@@ -97,6 +98,29 @@ public class FFStreamer2 extends Application{
                     mp.pause();
                 }
             });
+
+            fastForward.setOnAction(e -> {
+                MediaPlayer.Status status = mp.getStatus();
+
+                if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
+                    // don't do anything in these states
+                    return;
+                }
+
+                if (status == MediaPlayer.Status.PAUSED
+                        || status == MediaPlayer.Status.READY
+                        || status == MediaPlayer.Status.STOPPED) {
+                    // rewind the movie if we're sitting at the end
+                    if (atEndOfMedia) {
+                        mp.seek(mp.getStartTime());
+                        atEndOfMedia = false;
+                    }
+                    mp.setRate(2);
+                } else {
+                    mp.pause();
+                }
+            });
+
             mp.currentTimeProperty().addListener(ov -> updateValues());
 
             mp.setOnPlaying(() -> {
@@ -128,6 +152,7 @@ public class FFStreamer2 extends Application{
             });
 
             mediaBar.getChildren().add(playButton);
+            mediaBar.getChildren().add(fastForward);
             // Add spacer
             Label spacer = new Label("   ");
             mediaBar.getChildren().add(spacer);
