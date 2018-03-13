@@ -5,20 +5,35 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.datavyu.madias.javafx.jfxMedia;
+import org.datavyu.mediaplayers.StreamViewer;
+import org.datavyu.mediaplayers.javafx.JfxMediaPlayer;
+import org.datavyu.plugins.javafx.JfxPlugin;
+import org.datavyu.util.Identifier;
+
+import javax.swing.text.html.ImageView;
+import java.io.File;
 
 public class VideoController extends Application{
 
+    StreamViewer stremvViewer;
+    Stage primaryStage;
 
+    public static void main(String[] args) {
+        Application.launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        this.primaryStage = primaryStage;
         GridPane controllerkeyPad = new GridPane();
         controllerkeyPadInit(controllerkeyPad);
         Scene controllerScene = new Scene(controllerkeyPad);
         controllerScene.getStylesheets().add("DatavyuView.css");
-        primaryStage.setScene(controllerScene);
-        primaryStage.show();
+        this.primaryStage.setScene(controllerScene);
+        this.primaryStage.show();
     }
 
     private void controllerkeyPadInit(GridPane pane){
@@ -44,15 +59,25 @@ public class VideoController extends Application{
 
         addVideoButton.setOnAction(event -> {
             //Open a Media
-            });
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open A Video");
+            File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
+            if(selectedFile != null){
+
+                this.stremvViewer = new JfxMediaPlayer(Identifier.generateIdentifier(), new jfxMedia(selectedFile)).getStreamViewer();
+            }
+        });
         playButton.setOnAction(event -> {
             // Play Media
-            });
+            stremvViewer.play();
+        });
         pauseButton.setOnAction(event -> {
             // Pause Media
+            stremvViewer.pause();
         });
         stopButton.setOnAction(event -> {
             // Stop Media
+            stremvViewer.stop();
         });
         fButton.setOnAction(event -> {
             // Shuttle Forward Media

@@ -25,15 +25,13 @@ package org.datavyu.plugins;
 
 
 import javafx.scene.image.Image;
-import javafx.stage.Stage;//TODO: May change it
-import org.datavyu.madias.Media;
+import org.datavyu.madias.DatavyuMedia;
 import org.datavyu.mediaplayers.StreamViewer;
 import org.datavyu.util.Filter;
 import org.datavyu.util.Identifier;
 import org.datavyu.util.Platform;
 import org.datavyu.util.VersionRange;
 
-import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,8 +44,7 @@ public interface Plugin {
     /**
      * @return A new instance of the plugins data viewer.
      */
-    StreamViewer getNewStreamViewer(final Identifier identifier, final Media sourceMedia, final Stage parent, boolean
-            modal);
+    StreamViewer getNewStreamViewer(final Identifier identifier, final DatavyuMedia sourceMedia);
 
     /**
      * @return The data viewer class.

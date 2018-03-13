@@ -6,7 +6,7 @@ public enum Platform {
     LINUX,
     UNKNOWN;
 
-    public Platform getPlatform(){
+    public static Platform getPlatform(){
         String os = System.getProperty("os.name");
         if (os.contains("Mac")) {
             return Platform.MAC;
