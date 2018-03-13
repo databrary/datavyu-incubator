@@ -1,7 +1,86 @@
+.label {
+    -fx-text-alignment: CENTER;
+    -fx-alignment: CENTER;
+}
 .button {
     -fx-padding: 10;
     -fx-border-width: 2;
     -fx-border-insets: 3;
     -fx-border-radius: 5;
-    -fx-border-color: blue;
+    -fx-text-alignment: CENTER;
+    -fx-alignment: CENTER;
+    -fx-content-display: CENTER;
+}
+
+#play-button {
+    -fx-graphic: url("icons/DataController/eng/start.png");
+}
+
+#pause-button {
+    -fx-graphic: url("icons/DataController/eng/pause.png");
+}
+
+#stop-button {
+    -fx-graphic: url("icons/DataController/eng/stop.png");
+}
+
+#shuttle-f-button {
+    -fx-graphic: url("icons/DataController/eng/shuttle-forward.png");
+}
+
+#shuttle-b-button {
+    -fx-graphic: url("icons/DataController/eng/shuttle-back.png");
+}
+
+#jog-f-button {
+    -fx-graphic: url("icons/DataController/eng/jog-forward.png");
+}
+
+#jog-b-button {
+    -fx-graphic: url("icons/DataController/eng/jog-back.png");
+}
+
+#onset-button {
+    -fx-graphic: url("icons/DataController/eng/set-onset.png");
+}
+
+#offset-button {
+    -fx-graphic: url("icons/DataController/eng/set-offset-nine.png");
+}
+
+#point-cell-button{
+    -fx-graphic: url("icons/DataController/eng/point-cell-osx.png");
+}
+
+#hidetrack-button{
+    -fx-graphic: url("icons/DataController/eng/hide-tracks-osx.png");
+}
+
+#back-button{
+    -fx-graphic: url("icons/DataController/eng/back.png");
+}
+
+#find-button{
+    -fx-graphic: url("icons/DataController/eng/find-osx.png");
+}
+
+#newcell-button{
+    -fx-graphic: url("icons/DataController/eng/new-cell.png");
+}
+
+#newcell-prevoffset-button{
+    -fx-graphic: url("icons/DataController/eng/new-cell-set-offset.png");
+}
+
+
+.vbox {
+    -fx-background-color: GRAY;
+    -fx-alignment: CENTER;
+    -fx-padding: 4;
+}
+.text-field {
+    -fx-alignment: CENTER;
+    -fx-font-size: 10;
+    -fx-min-width: 80;
+    -fx-max-width: 80;
 }
