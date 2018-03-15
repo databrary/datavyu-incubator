@@ -1,5 +1,7 @@
 package org.datavyu.mediaplayers;
 
+import org.datavyu.views.VideoController.Rate;
+
 public interface StreamViewer {
 
     void play();
@@ -14,7 +16,9 @@ public interface StreamViewer {
 
     float getFrameRate();
 
-    float getRate();
+    Rate getRate(); //Should return the rate of the
 
-    void setRate(float rate);
+    void setRate(Rate rate); //Should check the state of the video controller
+
+    void shuttle(Rate value);
 }

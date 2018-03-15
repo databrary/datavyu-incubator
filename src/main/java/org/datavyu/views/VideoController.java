@@ -24,6 +24,8 @@ public class VideoController extends Application{
 
     StreamViewer stremvViewer;
     Stage primaryStage;
+    private Rate currentRate = Rate.defaultRate();
+    private Rate rate;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -42,9 +44,9 @@ public class VideoController extends Application{
         this.primaryStage.show();
     }
 
-    private void controllerkeyPadInit(GridPane pane){
+    private void controllerkeyPadInit(GridPane pane) {
         Button addVideoButton = new Button("Add Video");// Add media Button
-        Label mediaTime =  new Label("00:00:00:000");
+        Label mediaTime = new Label("00:00:00:000");
         mediaTime.setId("mediatime-label");
         Button playButton = new Button();// Play Media button
         playButton.setId("play-button");
@@ -77,24 +79,24 @@ public class VideoController extends Application{
         Button newCellPrevOffsetbutton = new Button();// New Cell Button with previous offset
         newCellPrevOffsetbutton.setId("newcell-prevoffset-button");
 
-        Label jumpBackLabel =  new Label("Jump Back By");
+        Label jumpBackLabel = new Label("Jump Back By");
         TextField jumpBackText = new TextField("00:00:05:000");//Force the format
-        VBox jumpBackBox = new VBox(1,jumpBackLabel,jumpBackText);
+        VBox jumpBackBox = new VBox(1, jumpBackLabel, jumpBackText);
         jumpBackBox.getStyleClass().add("vbox");
 
-        Label stepPerSecondLabel =  new Label("Steps Per Second");
+        Label stepPerSecondLabel = new Label("Steps Per Second");
         TextField stepPerSecondText = new TextField();//Force the format
-        VBox stepPerSecondBox = new VBox(1,stepPerSecondLabel,stepPerSecondText);
+        VBox stepPerSecondBox = new VBox(1, stepPerSecondLabel, stepPerSecondText);
         stepPerSecondBox.getStyleClass().add("vbox");
 
-        Label onsetLabel =  new Label("onset");
+        Label onsetLabel = new Label("onset");
         TextField onsetText = new TextField("00:00:00:000");//Force the format
-        VBox onsetBox = new VBox(1,onsetLabel,onsetText);
+        VBox onsetBox = new VBox(1, onsetLabel, onsetText);
         onsetBox.getStyleClass().add("vbox");
 
-        Label offsetLabel =  new Label("onset");
+        Label offsetLabel = new Label("onset");
         TextField offsetText = new TextField("00:00:00:000");//Force the format
-        VBox offsetBox = new VBox(1,offsetLabel,offsetText);
+        VBox offsetBox = new VBox(1, offsetLabel, offsetText);
         offsetBox.getStyleClass().add("vbox");
 
 
@@ -105,7 +107,7 @@ public class VideoController extends Application{
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open A Video");
             File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
-            if(selectedFile != null){
+            if (selectedFile != null) {
                 //Start with JavaFX until I inject the Plugin Manager
                 this.stremvViewer = new JfxMediaPlayer(Identifier.generateIdentifier(), new jfxMedia(selectedFile)).getStreamViewer();
             }
@@ -114,6 +116,7 @@ public class VideoController extends Application{
         //TODO: Check if we have any stream opened before we trigger an action
         playButton.setOnAction(event -> {
             // Play Media
+            stremvViewer.setRate(Rate.defaultRate());
             stremvViewer.play();
         });
         pauseButton.setOnAction(event -> {
@@ -126,11 +129,15 @@ public class VideoController extends Application{
         });
         fButton.setOnAction(event -> {
             // Shuttle Forward Media
-            stremvViewer.setRate(1);
+            System.out.println("Current Rate: " + currentRate + " Next Rate: " + currentRate.next());
+            stremvViewer.shuttle(currentRate.next());
+            setRate(currentRate.next());
         });
         bButton.setOnAction(event -> {
             // Shuttle Backward Media
-            stremvViewer.setRate(-1);
+            System.out.println("Current Rate: " + currentRate.getValue() + " Next Rate: " + currentRate.previous());
+            stremvViewer.shuttle(currentRate.previous());
+            setRate(currentRate.previous());
         });
         jogFButton.setOnAction(event -> {
             // Jog Forward Media
@@ -163,27 +170,176 @@ public class VideoController extends Application{
 
         });
 
-        pane.add(mediaTime,2,0,3,1);
-        pane.add(addVideoButton,1,1);
-        pane.add(pointCellbutton,2,2);
-        pane.add(hideTrack,3,2);
-        pane.add(onsetButton,1,3);
-        pane.add(playButton,2,3);
-        pane.add(offsetButton,3,3);
-        pane.add(backButton,4,3);
-        pane.add(jumpBackBox,5,3);
-        pane.add(bButton,1,4);
-        pane.add(stopButton,2,4);
-        pane.add(fButton,3,4);
-        pane.add(findButton,4,4);
-        pane.add(stepPerSecondBox,5,4);
-        pane.add(jogBButton,1,5);
-        pane.add(pauseButton,2,5);
-        pane.add(jogFButton,3,5);
-        pane.add(newCellButton,4,5,1,3);
-        pane.add(onsetBox,5,5);
-        pane.add(newCellPrevOffsetbutton,1,6,2,1);
-        pane.add(offsetBox,5,6);
+        pane.add(mediaTime, 2, 0, 3, 1);
+        pane.add(addVideoButton, 1, 1);
+        pane.add(pointCellbutton, 2, 2);
+        pane.add(hideTrack, 3, 2);
+        pane.add(onsetButton, 1, 3);
+        pane.add(playButton, 2, 3);
+        pane.add(offsetButton, 3, 3);
+        pane.add(backButton, 4, 3);
+        pane.add(jumpBackBox, 5, 3);
+        pane.add(bButton, 1, 4);
+        pane.add(stopButton, 2, 4);
+        pane.add(fButton, 3, 4);
+        pane.add(findButton, 4, 4);
+        pane.add(stepPerSecondBox, 5, 4);
+        pane.add(jogBButton, 1, 5);
+        pane.add(pauseButton, 2, 5);
+        pane.add(jogFButton, 3, 5);
+        pane.add(newCellButton, 4, 5, 1, 3);
+        pane.add(onsetBox, 5, 5);
+        pane.add(newCellPrevOffsetbutton, 1, 6, 2, 1);
+        pane.add(offsetBox, 5, 6);
+    }
+
+    public void setRate(Rate newRate) {
+        this.currentRate = newRate;
+    }
+
+    public Rate getRate() {
+        return this.currentRate;
+    }
+
+    public enum Rate {
+        X1D32((float) 0.03125) {
+            @Override
+            public Rate next() {
+                return X1D16;
+            }
+
+            @Override
+            public Rate previous() {
+                return X1D32;
+            }
+        },
+        X1D16((float) 0.0625) {
+            @Override
+            public Rate next() {
+                return X1D8;
+            }
+
+            @Override
+            public Rate previous() {
+                return X1D32;
+            }
+        },
+        X1D8((float) 0.125) {
+            @Override
+            public Rate next() {
+                return X1D4;
+            }
+
+            @Override
+            public Rate previous() {
+                return X1D16;
+            }
+        },
+        X1D4((float) 0.25) {
+            @Override
+            public Rate next() {
+                return X1D2;
+            }
+
+            @Override
+            public Rate previous() {
+                return X1D8;
+            }
+        },
+        X1D2((float) 0.5) {
+            @Override
+            public Rate next() {
+                return X1;
+            }
+
+            @Override
+            public Rate previous() {
+                return X1D4;
+            }
+        },
+        X1(1) {
+            @Override
+            public Rate next() {
+                return Rate.X2;
+            }
+
+            @Override
+            public Rate previous() {
+                return X1D2;
+            }
+        },
+        X2(2) {
+            @Override
+            public Rate next() {
+                return X4;
+            }
+
+            @Override
+            public Rate previous() {
+                return X1;
+            }
+        },
+        X4(4) {
+            @Override
+            public Rate next() {
+                return X8;
+            }
+
+            @Override
+            public Rate previous() {
+                return X2;
+            }
+        },
+        X8(8) {
+            @Override
+            public Rate next() {
+                return X16;
+            }
+
+            @Override
+            public Rate previous() {
+                return X4;
+            }
+        },
+        X16(16) {
+            @Override
+            public Rate next() {
+                return X32;
+            }
+
+            @Override
+            public Rate previous() {
+                return X8;
+            }
+        },
+        X32(32) {
+            @Override
+            public Rate next() {
+                return this;
+            }
+
+            @Override
+            public Rate previous() {
+                return X16;
+            }
+        };
+
+        private final float rate;
+
+        Rate(float rate) {
+            this.rate = rate;
+        }
+
+        public static Rate defaultRate(){
+            return X1;
+        }
+        public abstract Rate next();
+
+        public abstract Rate previous();
+
+        public float getValue(){
+            return this.rate;
+        }
     }
 
 
