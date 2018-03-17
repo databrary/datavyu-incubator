@@ -1,6 +1,9 @@
 package org.datavyu.util;
 
 public enum Platform {
+    //TODO: add any properties related to the Platform
+    //ex: Plugins, list of hot key ...
+
     MAC,
     WINDOWS,
     LINUX,
