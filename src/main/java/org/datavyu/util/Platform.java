@@ -9,17 +9,18 @@ public enum Platform {
     LINUX,
     UNKNOWN;
 
-    public static Platform getPlatform(){
-        String os = System.getProperty("os.name");
-        if (os.contains("Mac")) {
-            return Platform.MAC;
-        }
-        if (os.contains("Win")) {
-            return Platform.WINDOWS;
-        }
-        if (os.contains("Linux")) {
-            return Platform.LINUX;
-        }
-        return Platform.UNKNOWN;
+    public static final Platform current;
+
+    static {
+        String os = System.getProperty("os.name", "generic").toLowerCase();
+
+        if ((os.contains("mac")) || (os.contains("darwin")))
+            current = MAC;
+        else if (os.contains("win"))
+            current = WINDOWS;
+        else if (os.contains("nux"))
+            current = LINUX;
+        else
+            current = UNKNOWN;
     }
 }
