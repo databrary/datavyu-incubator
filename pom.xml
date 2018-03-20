@@ -28,6 +28,12 @@
     </organization>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>ffmpeg-platform</artifactId>
+            <version>3.4.1-1.4</version>
+        </dependency>
         <!-- Logger API -->
         <!-- Artifact: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
         <!-- Documentation: https://logging.apache.org/log4j/2.x/manual/api.html -->
