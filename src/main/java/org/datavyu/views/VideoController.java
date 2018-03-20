@@ -146,7 +146,7 @@ public class VideoController extends Application{
             File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
             if (selectedFile != null) {
                 //Start with JavaFX until I inject the Plugin Manager
-                this.stremvViewer = new JfxMediaPlayer(Identifier.generateIdentifier(), new jfxMedia(selectedFile)).getStreamViewer();
+                this.stremvViewer = new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile));
             }
         });
 
