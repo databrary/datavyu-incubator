@@ -17,6 +17,8 @@ public class jfxMedia implements DatavyuMedia {
         this.media = new Media(sourceFile.toURI().toString());
     }
 
+    public static DatavyuMedia getMedia(File sourceFile) { return new jfxMedia(sourceFile); }
+
     @Override
     public int getWidth() { return this.media.getWidth(); }
 
@@ -42,14 +44,10 @@ public class jfxMedia implements DatavyuMedia {
     public ObservableMap<String, Duration> getAbsoluteMarkers() { return this.media.getMarkers(); }
 
     @Override
-    public ObservableMap<String, Duration> getRelativeMarkers() {
-        return null;
-    }
+    public ObservableMap<String, Duration> getRelativeMarkers() { return null; }
 
     @Override
     public String getSource() { return this.media.getSource(); }
-
-    public static DatavyuMedia getMedia(File sourceFile) { return new jfxMedia(sourceFile); }
 
     @Override
     public Media getMedia(){return this.media; }

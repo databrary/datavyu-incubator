@@ -4,8 +4,10 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -48,10 +50,10 @@ public class VideoController extends Application{
         controllerkeyPadInit(controllerkeyPad);
 
         //TODO: starts with a simple slider just to control the stream
-        Pane mixerContoller = new Pane();
+        VBox mixerContoller = new VBox();
         mixerContollerInit(mixerContoller);
 
-        VBox videoControllerVbox = new VBox(controllerkeyPad,mixerContoller);
+        HBox videoControllerVbox = new HBox(controllerkeyPad,mixerContoller);
 
         this.controllerScene = new Scene(videoControllerVbox);
     }
@@ -60,7 +62,19 @@ public class VideoController extends Application{
 
     public Rate getRate() { return this.currentRate; }
 
-    private void mixerContollerInit(Pane mixerContoller) {
+    private void mixerContollerInit(VBox mixerContoller) {
+
+        Label mainClockLabel = new Label("Main Clock: ");
+        Label mainClockTimeLabel =  new Label("00:00:00:000");
+        Slider mainClockSlider =  new Slider();
+        HBox mainClockHBox = new HBox(mainClockLabel, mainClockTimeLabel, mainClockSlider);
+
+        Label streamClockLabel = new Label("Stream Clock: ");
+        Label streamClockTimeLabel =  new Label("00:00:00:000");
+        Slider streamSlider =  new Slider();
+        HBox streamHBox = new HBox(streamClockLabel, streamClockTimeLabel, streamSlider);
+
+        mixerContoller.getChildren().addAll(mainClockHBox,streamHBox);
 
     }
 
@@ -230,6 +244,8 @@ public class VideoController extends Application{
         pane.add(offsetBox, 5, 6);
     }
 
+
+    //TODO: ADD Backward playback
     public enum Rate {
         X1D32((float) 0.03125) {
             @Override
