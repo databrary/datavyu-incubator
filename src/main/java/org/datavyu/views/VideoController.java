@@ -1,6 +1,8 @@
 package org.datavyu.views;
 
 import javafx.application.Application;
+import javafx.beans.property.FloatProperty;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -44,7 +46,7 @@ public class VideoController extends Application{
         GridPane controllerkeyPad = new GridPane();
         controllerkeyPadInit(controllerkeyPad);
 
-        //TODO: starts with a simple slider just to control the stream
+        //TODO: start with a simple slider just to control the stream
         VBox mixerContoller = new VBox();
         mixerContollerInit(mixerContoller);
 
@@ -263,11 +265,141 @@ public class VideoController extends Application{
         }
     }
 
-
-
-    //TODO: ADD Backward playback
+    //TODO: Enter Seek Mode for backward Rates very fast rate
     public enum Rate {
-        X1D32((float) 0.03125) {
+        MX32(-32F){
+            @Override
+            public Rate next() {
+                return MX16;
+            }
+
+            @Override
+            public Rate previous() {
+                return this;
+            }
+        },
+        MX16(-16F){
+            @Override
+            public Rate next() {
+                return MX8;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX32;
+            }
+        },
+        MX8(-8F){
+            @Override
+            public Rate next() {
+                return MX4;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX16;
+            }
+        },
+        MX4(-4F){
+            @Override
+            public Rate next() {
+                return MX2;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX8;
+            }
+        },
+        MX2(-2F){
+            @Override
+            public Rate next() {
+                return MX1;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX4;
+            }
+        },
+        MX1(-1F){
+            @Override
+            public Rate next() {
+                return MX1D2;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX2;
+            }
+        },
+        MX1D2(-1/2F){
+            @Override
+            public Rate next() {
+                return MX1D4;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX1;
+            }
+        },
+        MX1D4(-1/4F){
+            @Override
+            public Rate next() {
+                return MX1D8;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX1D2;
+            }
+        },
+        MX1D8(-1/8F){
+            @Override
+            public Rate next() {
+                return MX1D16;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX1D4;
+            }
+        },
+        MX1D16(-1/16F){
+            @Override
+            public Rate next() {
+                return MX1D32;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX1D8;
+            }
+        },
+        MX1D32(-1/32F){
+            @Override
+            public Rate next() {
+                return X0;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX1D16;
+            }
+        },
+        X0(0){
+            @Override
+            public Rate next() {
+                return X1D32;
+            }
+
+            @Override
+            public Rate previous() {
+                return MX1D32;
+            }
+        },
+        X1D32(1/32F) {
             @Override
             public Rate next() {
                 return X1D16;
@@ -275,10 +407,10 @@ public class VideoController extends Application{
 
             @Override
             public Rate previous() {
-                return X1D32;
+                return X0;
             }
         },
-        X1D16((float) 0.0625) {
+        X1D16(1/16F) {
             @Override
             public Rate next() {
                 return X1D8;
@@ -289,7 +421,7 @@ public class VideoController extends Application{
                 return X1D32;
             }
         },
-        X1D8((float) 0.125) {
+        X1D8(1/8F) {
             @Override
             public Rate next() {
                 return X1D4;
@@ -300,7 +432,7 @@ public class VideoController extends Application{
                 return X1D16;
             }
         },
-        X1D4((float) 0.25) {
+        X1D4(1/4F) {
             @Override
             public Rate next() {
                 return X1D2;
@@ -311,7 +443,7 @@ public class VideoController extends Application{
                 return X1D8;
             }
         },
-        X1D2((float) 0.5) {
+        X1D2(1/2F) {
             @Override
             public Rate next() {
                 return X1;
@@ -322,7 +454,7 @@ public class VideoController extends Application{
                 return X1D4;
             }
         },
-        X1(1) {
+        X1(1F) {
             @Override
             public Rate next() {
                 return Rate.X2;
@@ -333,7 +465,7 @@ public class VideoController extends Application{
                 return X1D2;
             }
         },
-        X2(2) {
+        X2(2F) {
             @Override
             public Rate next() {
                 return X4;
@@ -344,7 +476,7 @@ public class VideoController extends Application{
                 return X1;
             }
         },
-        X4(4) {
+        X4(4F) {
             @Override
             public Rate next() {
                 return X8;
@@ -355,7 +487,7 @@ public class VideoController extends Application{
                 return X2;
             }
         },
-        X8(8) {
+        X8(8F) {
             @Override
             public Rate next() {
                 return X16;
@@ -366,7 +498,7 @@ public class VideoController extends Application{
                 return X4;
             }
         },
-        X16(16) {
+        X16(16F) {
             @Override
             public Rate next() {
                 return X32;
@@ -377,7 +509,7 @@ public class VideoController extends Application{
                 return X8;
             }
         },
-        X32(32) {
+        X32(32F) {
             @Override
             public Rate next() {
                 return this;
@@ -389,23 +521,15 @@ public class VideoController extends Application{
             }
         };
 
-        private final float rate;
+        private FloatProperty rate;
 
         Rate(float rate) {
-            this.rate = rate;
+            this.rate = new SimpleFloatProperty(rate);
         }
 
-        public static Rate defaultRate(){
-            return X1;
-        }
+        public float getValue(){ return this.rate.get(); }
 
-        public abstract Rate next();
-
-        public abstract Rate previous();
-
-        public float getValue(){
-            return this.rate;
-        }
+        public FloatProperty rateProperty() { return rate; }
 
         public static Rate getRate(float value){
             for (Rate rate : Rate.values()){
@@ -413,9 +537,27 @@ public class VideoController extends Application{
                     return rate;
                 }
             }
-            return null; //TODO: double check this method
+            return defaultRate(); //TODO: double check this method
         }
+
+        public static Rate defaultRate(){
+            return X1;
+        }
+
+        public static Rate stopRate() { return X0; }
+
+        public abstract Rate next();
+
+        public abstract Rate previous();
     }
+
+    public enum Status {
+        UNKNOWN,
+        READY,
+        PAUSED,
+        PLAYING,
+        STOPPED
+    };
 
     private StreamViewer streamvViewer;
 
