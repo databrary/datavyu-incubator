@@ -72,6 +72,11 @@
     -fx-graphic: url("icons/DataController/eng/new-cell-set-offset.png");
 }
 
+#mixer-controller{
+    -fx-alignment: CENTER;
+    -fx-max-width: 500;
+    -fx-min-width: 500;
+}
 
 .vbox {
     -fx-background-color: GRAY;
@@ -83,4 +88,16 @@
     -fx-font-size: 10;
     -fx-min-width: 80;
     -fx-max-width: 80;
+}
+
+#stream-clock-hbox{
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
+    -fx-spacing: 20;
+}
+
+#main-clock-hbox{
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
+    -fx-spacing: 20;
 }

@@ -8,7 +8,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -22,11 +21,6 @@ import java.io.File;
 
 public class VideoController extends Application{
 
-    private StreamViewer stremvViewer;
-    Stage primaryStage;
-    Scene controllerScene;
-    private Rate currentRate = Rate.defaultRate();
-
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -38,6 +32,7 @@ public class VideoController extends Application{
         initVideoControllerScene();
 
         this.controllerScene.getStylesheets().add("DatavyuView.css");
+
         this.primaryStage.setScene(controllerScene);
         this.primaryStage.setTitle("Data Viewer Controller");
         this.primaryStage.setResizable(false);
@@ -64,17 +59,32 @@ public class VideoController extends Application{
 
     private void mixerContollerInit(VBox mixerContoller) {
 
+        mixerContoller.setId("mixer-controller");
+
+        Label startRegionLabel =  new Label("Start Region: ");
+        startRegionTextField =  new TextField("00:00:00:000");
+        HBox startRegionHBox = new HBox(startRegionLabel,startRegionTextField);
+
+        Label endRegionLabel =  new Label("End Region: ");
+        endRegionTextField =  new TextField("00:00:00:000");
+        HBox endRegionHBox = new HBox(endRegionLabel,endRegionTextField);
+
+        HBox regionHBox = new HBox(startRegionHBox,endRegionHBox);
+
         Label mainClockLabel = new Label("Main Clock: ");
-        Label mainClockTimeLabel =  new Label("00:00:00:000");
-        Slider mainClockSlider =  new Slider();
+        mainClockTimeLabel =  new Label("00:00:00:000");
+        mainClockSlider =  new Slider();
         HBox mainClockHBox = new HBox(mainClockLabel, mainClockTimeLabel, mainClockSlider);
+        mainClockHBox.setId("main-clock-hbox");
 
         Label streamClockLabel = new Label("Stream Clock: ");
-        Label streamClockTimeLabel =  new Label("00:00:00:000");
-        Slider streamSlider =  new Slider();
+        streamClockTimeLabel =  new Label("00:00:00:000");
+        streamSlider =  new Slider();
         HBox streamHBox = new HBox(streamClockLabel, streamClockTimeLabel, streamSlider);
+        streamHBox.setId("stream-clock-hbox");
 
-        mixerContoller.getChildren().addAll(mainClockHBox,streamHBox);
+
+        mixerContoller.getChildren().addAll(regionHBox, mainClockHBox,streamHBox);
 
     }
 
@@ -160,34 +170,34 @@ public class VideoController extends Application{
             File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
             if (selectedFile != null) {
                 //Start with JavaFX until I inject the Plugin Manager
-                this.stremvViewer = new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile));
+                this.streamvViewer = new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile));
             }
         });
 
         //TODO: Check if we have any stream opened before we trigger an action
         playButton.setOnAction(event -> {
             // Play Media
-            stremvViewer.setRate(Rate.defaultRate());
-            stremvViewer.play();
+            this.streamvViewer.setRate(Rate.defaultRate());
+            this.streamvViewer.play();
         });
         pauseButton.setOnAction(event -> {
             // Pause Media
-            stremvViewer.pause();
+            this.streamvViewer.pause();
         });
         stopButton.setOnAction(event -> {
             // Stop Media
-            stremvViewer.stop();
+            this.streamvViewer.stop();
         });
         fButton.setOnAction(event -> {
             // Shuttle Forward Media
             System.out.println("Current Rate: " + currentRate + " Next Rate: " + currentRate.next());
-            stremvViewer.shuttle(currentRate.next());
+            this.streamvViewer.shuttle(currentRate.next());
             setRate(currentRate.next());//TODO: Find a better way to perssist the Rate of the VideoController
         });
         bButton.setOnAction(event -> {
             // Shuttle Backward Media
             System.out.println("Current Rate: " + currentRate.getValue() + " Next Rate: " + currentRate.previous());
-            stremvViewer.shuttle(currentRate.previous());
+            this.streamvViewer.shuttle(currentRate.previous());
             setRate(currentRate.previous());
         });
         jogFButton.setOnAction(event -> {
@@ -243,6 +253,16 @@ public class VideoController extends Application{
         pane.add(newCellPrevOffsetbutton, 1, 6, 2, 1);
         pane.add(offsetBox, 5, 6);
     }
+
+    protected void updateValues() {
+        if (mainClockTimeLabel != null){
+
+        }
+        if (streamClockTimeLabel != null) {
+
+        }
+    }
+
 
 
     //TODO: ADD Backward playback
@@ -378,6 +398,7 @@ public class VideoController extends Application{
         public static Rate defaultRate(){
             return X1;
         }
+
         public abstract Rate next();
 
         public abstract Rate previous();
@@ -385,6 +406,32 @@ public class VideoController extends Application{
         public float getValue(){
             return this.rate;
         }
+
+        public static Rate getRate(float value){
+            for (Rate rate : Rate.values()){
+                if (rate.getValue() == value){
+                    return rate;
+                }
+            }
+            return null; //TODO: double check this method
+        }
     }
+
+    private StreamViewer streamvViewer;
+
+    private Stage primaryStage;
+
+    private Scene controllerScene;
+
+    private TextField startRegionTextField;
+    private TextField endRegionTextField;
+
+    private Slider mainClockSlider;
+    private Slider streamSlider;
+
+    private Label mainClockTimeLabel;
+    private Label streamClockTimeLabel;
+
+    private Rate currentRate = Rate.defaultRate();
 
 }

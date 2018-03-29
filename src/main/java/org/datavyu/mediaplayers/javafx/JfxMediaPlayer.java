@@ -17,6 +17,8 @@ import org.datavyu.views.VideoController.Rate;
 
 public class JfxMediaPlayer extends Stage implements StreamViewer{
 
+    //TODO: sync the streamviewr rate with the video controller rate
+    //Think about removing the rate setter and make the rate listen to the video controller rate
 
     private final MediaPlayer mp;
     private final Identifier identifier;
@@ -24,6 +26,7 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
     private MediaView mv;
     private long duration = -1;
     private long lastSeekTime = -1;
+    private Rate rate;
 
     public JfxMediaPlayer(Identifier identifier, DatavyuMedia media) {
         this.identifier = identifier;
@@ -111,26 +114,26 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
 
     @Override
     public Rate getRate() {
-        return null;
+        return Rate.getRate((float) mp.getRate());
     }
 
     @Override
     public void setRate(Rate rate) {
+        this.mp.setRate(rate.getValue());
     }
 
     @Override
     public void shuttle(Rate rate) {
-        mp.setRate(rate.getValue());
+        this.setRate(rate);
     }
 
     public double height() {
-        return mp.getMedia().getHeight();
+        return this.mp.getMedia().getHeight();
     }
 
     public boolean isPlaying() { return mp.getStatus() == MediaPlayer.Status.PLAYING; }
 
     public void setScale(double scale) {
-//        logger.info("Setting scale to %2.2f", scale);
         this.setHeight(mp.getMedia().getHeight() * scale);
         this.setWidth(mp.getMedia().getWidth() * scale);
     }
@@ -168,104 +171,4 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
             }
         });
     }
-
-//    private void handler(){
-//        stage.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
-//            @Override
-//            public void handle(KeyEvent event) {
-//                VideoController videoController = Datavyu.getVideoController();
-//                switch (event.getCode()){
-//                    case DIVIDE: {
-//                        if(Datavyu.getPlatform().equals(Datavyu.Platform.MAC)){
-//                            videoController.pressShowTracksSmall();
-//                        }else{
-//                            videoController.pressPointCell();
-//                        }
-//                        break;
-//                    }
-//                    case EQUALS:{
-//                        if(Datavyu.getPlatform().equals(Datavyu.Platform.MAC)){
-//                            videoController.pressPointCell();
-//                        }
-//                        break;
-//                    }
-//                    case MULTIPLY:{
-//                        if (!Datavyu.getPlatform().equals(Datavyu.Platform.MAC)) {
-//                            videoController.pressShowTracksSmall();
-//                        }
-//                        break;
-//                    }
-//                    case NUMPAD7:{
-//                        videoController.pressSetCellOnset();
-//                        break;
-//                    }
-//                    case NUMPAD8:{
-//                        videoController.pressPlay();
-//                        break;
-//                    }
-//                    case NUMPAD9:{
-//                        videoController.pressSetCellOffsetNine();
-//                        break;
-//                    }
-//                    case NUMPAD4:{
-//                        videoController.pressShuttleBack();
-//                        break;
-//                    }
-//                    case NUMPAD5:{
-//                        videoController.pressStop();
-//                        break;
-//                    }
-//                    case NUMPAD6:{
-//                        videoController.pressShuttleForward();
-//                        break;
-//                    }
-//                    case NUMPAD1:{
-//                        videoController.jogBackAction();
-//                        break;
-//                    }
-//                    case NUMPAD2:{
-//                        videoController.pressPause();
-//                        break;
-//                    }
-//                    case NUMPAD3:{
-//                        videoController.jogForwardAction();
-//                        break;
-//                    }
-//                    case NUMPAD0:{
-//                        videoController.pressCreateNewCellSettingOffset();
-//                        break;
-//                    }
-//                    case DECIMAL:{
-//                        videoController.pressSetCellOffsetPeriod();
-//                        break;
-//                    }
-//                    case SUBTRACT:{
-//                        if(event.getCode() == KeyCode.CONTROL){
-//                            videoController.clearRegionOfInterestAction();
-//                        } else {
-//                            videoController.pressGoBack();
-//                        }
-//                    }
-//                    case ADD:{
-//                        if (event.getCode() == KeyCode.SHIFT){
-//                            videoController.pressFind();
-//                            videoController.findOffsetAction();
-//                        } else if(event.getCode() == KeyCode.CONTROL){
-//                            videoController.pressFind();
-//                            videoController.setRegionOfInterestAction();
-//                        } else {
-//                            videoController.pressFind();
-//                        }
-//                    }
-//                    case ENTER:{
-//                        videoController.pressCreateNewCell();
-//                        break;
-//                    }
-//                    default:{
-//                        break;
-//                    }
-//                }
-//            }
-//        });
-//    }
 }
