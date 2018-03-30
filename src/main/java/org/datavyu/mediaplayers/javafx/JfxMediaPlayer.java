@@ -13,7 +13,7 @@ import javafx.util.Duration;
 import org.datavyu.madias.DatavyuMedia;
 import org.datavyu.mediaplayers.StreamViewer;
 import org.datavyu.util.Identifier;
-import org.datavyu.views.VideoController.Rate;
+import org.datavyu.util.Rate;
 
 public class JfxMediaPlayer extends Stage implements StreamViewer{
 
@@ -63,9 +63,10 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
     public StreamViewer getStreamViewer(){ return this; }
 
     @Override
-    public void play() {
-        mp.play();
-    }
+    public Identifier getIdentifier() { return this.identifier; }
+
+    @Override
+    public void play() { mp.play(); }
 
     @Override
     public void pause() {
@@ -96,6 +97,11 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
     }
 
     @Override
+    public void jog(int direction, Duration time) {
+
+    }
+
+    @Override
     public long getCurrentTime() {
         return (long) mp.getCurrentTime().toMillis();
     }
@@ -120,6 +126,11 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
     @Override
     public void setRate(Rate rate) {
         this.mp.setRate(rate.getValue());
+    }
+
+    @Override
+    public void add(StreamViewer stream) {
+        //ONLY for DatavyuStatus
     }
 
     @Override

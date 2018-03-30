@@ -1,8 +1,14 @@
 package org.datavyu.mediaplayers;
 
-import org.datavyu.views.VideoController.Rate;
+
+import javafx.util.Duration;
+import org.datavyu.mediaplayers.javafx.JfxMediaPlayer;
+import org.datavyu.util.Identifier;
+import org.datavyu.util.Rate;
 
 public interface StreamViewer {
+
+    Identifier getIdentifier();
 
     void play();
 
@@ -12,6 +18,10 @@ public interface StreamViewer {
 
     void seek(long time);
 
+    void shuttle(Rate rate);
+
+    void jog(int direction, Duration time);
+
     long getCurrentTime();
 
     float getFrameRate();
@@ -20,5 +30,5 @@ public interface StreamViewer {
 
     void setRate(Rate rate); //Should check the state of the video controller
 
-    void shuttle(Rate value);
+    void add(StreamViewer stream);
 }

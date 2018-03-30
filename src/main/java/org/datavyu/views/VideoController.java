@@ -1,8 +1,6 @@
 package org.datavyu.views;
 
 import javafx.application.Application;
-import javafx.beans.property.FloatProperty;
-import javafx.beans.property.SimpleFloatProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,10 +12,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javafx.util.Duration;
 import org.datavyu.madias.javafx.jfxMedia;
+import org.datavyu.mediaplayers.DatavyuStream;
 import org.datavyu.mediaplayers.StreamViewer;
 import org.datavyu.mediaplayers.javafx.JfxMediaPlayer;
 import org.datavyu.util.Identifier;
+import org.datavyu.util.Rate;
 
 import java.io.File;
 
@@ -31,9 +32,10 @@ public class VideoController extends Application{
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
 
-        initVideoControllerScene();
+        // Initialize the DatavyuStream (MainStream)
+        this.mainStream = DatavyuStream.getDatavyuStream();
 
-        this.controllerScene.getStylesheets().add("DatavyuView.css");
+        initVideoControllerScene();
 
         this.primaryStage.setScene(controllerScene);
         this.primaryStage.setTitle("Data Viewer Controller");
@@ -53,6 +55,8 @@ public class VideoController extends Application{
         HBox videoControllerVbox = new HBox(controllerkeyPad,mixerContoller);
 
         this.controllerScene = new Scene(videoControllerVbox);
+
+        this.controllerScene.getStylesheets().add("DatavyuView.css");
     }
 
     public void setRate(Rate newRate) { this.currentRate = newRate; }
@@ -166,47 +170,37 @@ public class VideoController extends Application{
 
         addVideoButton.setOnAction(event -> {
             //Open a Media
-            //TODO: add a File Chooser Filter
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open A Video");
-            File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
-            if (selectedFile != null) {
-                //Start with JavaFX until I inject the Plugin Manager
-                this.streamvViewer = new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile));
-            }
+            this.openStreams();
         });
 
         //TODO: Check if we have any stream opened before we trigger an action
         playButton.setOnAction(event -> {
             // Play Media
-            this.streamvViewer.setRate(Rate.defaultRate());
-            this.streamvViewer.play();
+            this.playStreams();
         });
         pauseButton.setOnAction(event -> {
             // Pause Media
-            this.streamvViewer.pause();
+            this.pauseStreams();
         });
         stopButton.setOnAction(event -> {
             // Stop Media
-            this.streamvViewer.stop();
+            this.stopStreams();
         });
         fButton.setOnAction(event -> {
-            // Shuttle Forward Media
-            System.out.println("Current Rate: " + currentRate + " Next Rate: " + currentRate.next());
-            this.streamvViewer.shuttle(currentRate.next());
-            setRate(currentRate.next());//TODO: Find a better way to perssist the Rate of the VideoController
+            // Shuttle Forward Media (+1)
+            this.shuttleStreams(+1);
         });
         bButton.setOnAction(event -> {
-            // Shuttle Backward Media
-            System.out.println("Current Rate: " + currentRate.getValue() + " Next Rate: " + currentRate.previous());
-            this.streamvViewer.shuttle(currentRate.previous());
-            setRate(currentRate.previous());
+            // Shuttle Backward Media (-1)
+            this.shuttleStreams(-1);
         });
         jogFButton.setOnAction(event -> {
-            // Jog Forward Media
+            // Jog Forward Media (+1)
+            this.jogStreams(+1, Duration.ONE);
         });
         jogBButton.setOnAction(event -> {
-            // Jog Backward Media
+            // Jog Backward Media (-1)
+            this.jogStreams(-1, Duration.ONE);
         });
         onsetButton.setOnAction(event -> {
             // Set Cell onset
@@ -256,6 +250,48 @@ public class VideoController extends Application{
         pane.add(offsetBox, 5, 6);
     }
 
+    private void openStreams() {
+        //TODO: add a File Chooser Filter
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open A Video");
+        File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
+        if (selectedFile != null) {
+            //the MainStream represent the MainClock
+            //TODO: add a new stream according to the selected plugin
+            this.mainStream.add(new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
+        }
+    }
+
+    private void jogStreams(int direction, Duration time) {
+        //TODO: Need to implement the jog feature
+    }
+
+    private void shuttleStreams(final int direction) {
+        if( direction == +1){
+            this.currentRate = currentRate.next();
+            this.mainStream.shuttle(currentRate.next());
+        }
+        if( direction == -1){
+            this.currentRate = currentRate.previous();
+            this.mainStream.shuttle(currentRate.previous());
+        }
+    }
+
+    private void pauseStreams() {
+        //Keep the current state of the Rate
+        this.mainStream.pause();
+    }
+
+    private void playStreams() {
+        //Always Play at X1
+        this.mainStream.play();
+    }
+
+    void stopStreams(){
+        //Set the rate to X0
+        this.mainStream.stop();
+    }
+
     protected void updateValues() {
         if (mainClockTimeLabel != null){
 
@@ -264,302 +300,7 @@ public class VideoController extends Application{
 
         }
     }
-
-    //TODO: Enter Seek Mode for backward Rates very fast rate
-    public enum Rate {
-        MX32(-32F){
-            @Override
-            public Rate next() {
-                return MX16;
-            }
-
-            @Override
-            public Rate previous() {
-                return this;
-            }
-        },
-        MX16(-16F){
-            @Override
-            public Rate next() {
-                return MX8;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX32;
-            }
-        },
-        MX8(-8F){
-            @Override
-            public Rate next() {
-                return MX4;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX16;
-            }
-        },
-        MX4(-4F){
-            @Override
-            public Rate next() {
-                return MX2;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX8;
-            }
-        },
-        MX2(-2F){
-            @Override
-            public Rate next() {
-                return MX1;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX4;
-            }
-        },
-        MX1(-1F){
-            @Override
-            public Rate next() {
-                return MX1D2;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX2;
-            }
-        },
-        MX1D2(-1/2F){
-            @Override
-            public Rate next() {
-                return MX1D4;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX1;
-            }
-        },
-        MX1D4(-1/4F){
-            @Override
-            public Rate next() {
-                return MX1D8;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX1D2;
-            }
-        },
-        MX1D8(-1/8F){
-            @Override
-            public Rate next() {
-                return MX1D16;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX1D4;
-            }
-        },
-        MX1D16(-1/16F){
-            @Override
-            public Rate next() {
-                return MX1D32;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX1D8;
-            }
-        },
-        MX1D32(-1/32F){
-            @Override
-            public Rate next() {
-                return X0;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX1D16;
-            }
-        },
-        X0(0){
-            @Override
-            public Rate next() {
-                return X1D32;
-            }
-
-            @Override
-            public Rate previous() {
-                return MX1D32;
-            }
-        },
-        X1D32(1/32F) {
-            @Override
-            public Rate next() {
-                return X1D16;
-            }
-
-            @Override
-            public Rate previous() {
-                return X0;
-            }
-        },
-        X1D16(1/16F) {
-            @Override
-            public Rate next() {
-                return X1D8;
-            }
-
-            @Override
-            public Rate previous() {
-                return X1D32;
-            }
-        },
-        X1D8(1/8F) {
-            @Override
-            public Rate next() {
-                return X1D4;
-            }
-
-            @Override
-            public Rate previous() {
-                return X1D16;
-            }
-        },
-        X1D4(1/4F) {
-            @Override
-            public Rate next() {
-                return X1D2;
-            }
-
-            @Override
-            public Rate previous() {
-                return X1D8;
-            }
-        },
-        X1D2(1/2F) {
-            @Override
-            public Rate next() {
-                return X1;
-            }
-
-            @Override
-            public Rate previous() {
-                return X1D4;
-            }
-        },
-        X1(1F) {
-            @Override
-            public Rate next() {
-                return Rate.X2;
-            }
-
-            @Override
-            public Rate previous() {
-                return X1D2;
-            }
-        },
-        X2(2F) {
-            @Override
-            public Rate next() {
-                return X4;
-            }
-
-            @Override
-            public Rate previous() {
-                return X1;
-            }
-        },
-        X4(4F) {
-            @Override
-            public Rate next() {
-                return X8;
-            }
-
-            @Override
-            public Rate previous() {
-                return X2;
-            }
-        },
-        X8(8F) {
-            @Override
-            public Rate next() {
-                return X16;
-            }
-
-            @Override
-            public Rate previous() {
-                return X4;
-            }
-        },
-        X16(16F) {
-            @Override
-            public Rate next() {
-                return X32;
-            }
-
-            @Override
-            public Rate previous() {
-                return X8;
-            }
-        },
-        X32(32F) {
-            @Override
-            public Rate next() {
-                return this;
-            }
-
-            @Override
-            public Rate previous() {
-                return X16;
-            }
-        };
-
-        private FloatProperty rate;
-
-        Rate(float rate) {
-            this.rate = new SimpleFloatProperty(rate);
-        }
-
-        public float getValue(){ return this.rate.get(); }
-
-        public FloatProperty rateProperty() { return rate; }
-
-        public static Rate getRate(float value){
-            for (Rate rate : Rate.values()){
-                if (rate.getValue() == value){
-                    return rate;
-                }
-            }
-            return defaultRate(); //TODO: double check this method
-        }
-
-        public static Rate defaultRate(){
-            return X1;
-        }
-
-        public static Rate stopRate() { return X0; }
-
-        public abstract Rate next();
-
-        public abstract Rate previous();
-    }
-
-    public enum Status {
-        UNKNOWN,
-        READY,
-        PAUSED,
-        PLAYING,
-        STOPPED
-    };
-
-    private StreamViewer streamvViewer;
+    private DatavyuStream mainStream;
 
     private Stage primaryStage;
 
@@ -574,6 +315,6 @@ public class VideoController extends Application{
     private Label mainClockTimeLabel;
     private Label streamClockTimeLabel;
 
-    private Rate currentRate = Rate.defaultRate();
+    private Rate currentRate = Rate.stopRate();
 
 }
