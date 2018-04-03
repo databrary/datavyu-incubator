@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -29,11 +30,19 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
-            <artifactId>ffmpeg-platform</artifactId>
-            <version>3.4.1-1.4</version>
-        </dependency>
+=======
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.datavyu</groupId>
+    <artifactId>datavyu-incubator</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+>>>>>>> 7e250d217ffe783a1f2cc33b796fb11c30f8bbff
+<<<<<<< HEAD
 
         <dependency>
             <groupId>org.bytedeco</groupId>
@@ -84,3 +93,12 @@
     </dependencies>
 
 </project>
+=======
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.4</version>
+        </dependency>
+    </dependencies>
+</project>
+>>>>>>> 7e250d217ffe783a1f2cc33b796fb11c30f8bbff

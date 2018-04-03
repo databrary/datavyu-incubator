@@ -1,5 +1,6 @@
 package org.datavyu;
 
+<<<<<<< HEAD
 
 
 import org.bytedeco.javacv.CanvasFrame;
@@ -9,11 +10,24 @@ import org.bytedeco.javacv.FrameGrabber;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
+=======
+>>>>>>> 7e250d217ffe783a1f2cc33b796fb11c30f8bbff
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+<<<<<<< HEAD
+=======
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.avformat;
+import org.bytedeco.javacv.*;
+
+import javax.sound.sampled.*;
+import javax.swing.*;
+>>>>>>> 7e250d217ffe783a1f2cc33b796fb11c30f8bbff
 
 public class FFStreamer {
 
