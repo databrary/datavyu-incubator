@@ -1,18 +1,19 @@
 package org.datavyu;
 
+
+
+import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameGrabber;
+
+import javax.sound.sampled.*;
+import javax.swing.*;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.bytedeco.javacpp.Pointer;
-import org.bytedeco.javacpp.avformat;
-import org.bytedeco.javacv.*;
-
-import javax.sound.sampled.*;
-import javax.swing.*;
 
 public class FFStreamer {
 
