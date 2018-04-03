@@ -28,12 +28,6 @@
     </organization>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacpp</artifactId>
-            <version>1.4.1</version>
-        </dependency>
         <!-- Logger API -->
         <!-- Artifact: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
         <!-- Documentation: https://logging.apache.org/log4j/2.x/manual/api.html -->
@@ -70,16 +64,24 @@
             <artifactId>commons-io</artifactId>
             <version>2.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacv</artifactId>
-            <version>1.4</version>
-        </dependency>
 
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv-platform</artifactId>
-            <version>1.4</version>
+            <version>1.4.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacpp</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>${moduleName}-platform</artifactId>
+            <version>${moduleVersion}-1.4.1</version>
+        </dependency>
+
     </dependencies>
 </project>
