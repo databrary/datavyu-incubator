@@ -1,6 +1,7 @@
 package org.datavyu.views;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +17,8 @@ import javafx.util.Duration;
 import org.datavyu.madias.javafx.jfxMedia;
 import org.datavyu.mediaplayers.DatavyuStream;
 import org.datavyu.mediaplayers.StreamViewer;
+import org.datavyu.mediaplayers.ffmpeg.FFmpegMediaPlayerFX;
+import org.datavyu.mediaplayers.ffmpeg.FFmpegMediaPlayerSwing;
 import org.datavyu.mediaplayers.javafx.JfxMediaPlayer;
 import org.datavyu.util.Identifier;
 import org.datavyu.util.Rate;
@@ -29,7 +32,7 @@ public class VideoController extends Application{
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
         // Initialize the DatavyuStream (MainStream)
@@ -258,7 +261,9 @@ public class VideoController extends Application{
         if (selectedFile != null) {
             //the MainStream represent the MainClock
             //TODO: add a new stream according to the selected plugin
-            this.mainStream.add(new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
+//            this.mainStream.add(new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
+//            mainStream.add(new FFmpegMediaPlayerSwing(Identifier.generateIdentifier(), null));
+            mainStream.add(new FFmpegMediaPlayerFX(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
         }
     }
 
