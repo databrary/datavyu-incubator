@@ -75,3 +75,6 @@ target/
 
 # IntelliJ
 /out/
+
+*.mp4
+*.avi
