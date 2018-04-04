@@ -26,7 +26,7 @@ public class FFStreamer2 extends Application{
     private static final File sourceFile = new File("/Users/reda/Databrary/datavyuByteDecoFFmpeg/src/main/java/DatavyuSampleVideo.mp4");
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         primaryStage.setTitle("FFMPEG Player");
         Group root = new Group();
         Scene scene = new Scene(root, 800,600);

@@ -6,7 +6,6 @@ import org.bytedeco.javacpp.PointerPointer;
 import java.io.*;
 
 import static org.bytedeco.javacpp.avcodec.*;
-import static org.bytedeco.javacpp.avdevice.*;
 import static org.bytedeco.javacpp.avformat.*;
 import static org.bytedeco.javacpp.avutil.*;
 import static org.bytedeco.javacpp.swscale.*;
@@ -15,7 +14,7 @@ public class FFPlayer1 {
 
     public static void main(String arg[]) throws IOException {
 
-        String sourceFileString = "/Users/reda/Databrary/datavyuByteDecoFFmpeg/src/main/java/test.mp4";
+        String sourceFileString = "DatavyuSampleVideo.mp4";
 
         AVFormatContext pFormatCtx = null; //stores information about the file format in the AVFormatContext structure
 

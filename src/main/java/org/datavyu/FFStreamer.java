@@ -1,41 +1,34 @@
 package org.datavyu;
 
 
-import org.bytedeco.javacv.CanvasFrame;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber;
+
+import org.bytedeco.javacv.*;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.bytedeco.javacpp.Pointer;
-import org.bytedeco.javacpp.avformat;
-import org.bytedeco.javacv.*;
-
-import javax.sound.sampled.*;
-import javax.swing.*;
 
 public class FFStreamer {
 
 
-    private static final String sourceFile = "/Users/reda/Databrary/datavyuByteDecoFFmpeg/src/main/java/DatavyuSampleVideo.mp4";//PATH to the video
+    private static final File sourceFile = new File("/Users/redanezzar/Databrary/datavyu-incubator/src/main/resources/DatavyuSampleVideo.mp4");//PATH to the video
 
     private static volatile Thread playThread;
 
     public static void main(String[] args) {
         playThread = new Thread(() -> {
             try {
-                CanvasFrame jFrame = new CanvasFrame(sourceFile);
+                CanvasFrame jFrame = new CanvasFrame(sourceFile.toString());
                 jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-                FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(sourceFile);
+                FFmpegFrameGrabber grabber = FFmpegFrameGrabber.createDefault(sourceFile);
+                grabber.setFormat("mp4");
+
                 grabber.start();
 
                 Frame frame = null;

@@ -7,5 +7,5 @@ public class DatavyuStatus {
         PAUSED,
         PLAYING,
         STOPPED
-    };
+    }
 }
