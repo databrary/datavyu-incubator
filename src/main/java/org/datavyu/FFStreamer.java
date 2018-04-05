@@ -74,8 +74,6 @@ public class FFStreamer {
                         }
                     }
 
-                    Thread.sleep(10);
-                    System.out.println("frame grabbed at " + grabber.getTimestamp());
                 }
                 System.out.println("loop end with frame: " + frame);
                 executor.shutdownNow();
@@ -85,8 +83,6 @@ public class FFStreamer {
             } catch (FrameGrabber.Exception ex) {
                 System.out.println("exception: " + ex);
             } catch (LineUnavailableException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             System.out.println("end");
