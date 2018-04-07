@@ -18,13 +18,10 @@ import org.datavyu.util.Identifier;
 import org.datavyu.util.Rate;
 
 import javax.sound.sampled.*;
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.concurrent.*;
 
-import static org.bytedeco.javacpp.avutil.AV_LOG_ERROR;
-import static org.bytedeco.javacpp.avutil.av_log_set_level;
 
 public class FFmpegMediaPlayerFX extends Stage implements StreamViewer {
 
@@ -61,21 +58,6 @@ public class FFmpegMediaPlayerFX extends Stage implements StreamViewer {
     public FFmpegMediaPlayerFX(Identifier identifier, DatavyuMedia media){
         this.identifier = identifier;
         this.media = media;
-        converter = new Java2DFrameConverter();
-        // Calculate the time BEFORE we start playing.
-        systemStartTime = System.nanoTime();
-        streamStartTime = 0;
-        isPlaying = false;
-        try {
-            grabber = FFmpegFrameGrabber.createDefault(new File("/Users/redanezzar/Databrary/datavyu-incubator/src/main/resources/DatavyuSampleVideo.mp4"));
-//            grabber = FFmpegFrameGrabber.createDefault(new File("/Users/redanezzar/Databrary/datavyu-incubator/src/main/resources/hd2.mov"));
-            grabber.start();
-            System.out.println("FPS: " + grabber.getFrameRate() + " Number of Frame: " + grabber.getLengthInFrames() + " Number of Sample: " + grabber.getLengthInAudioFrames());
-            av_log_set_level(AV_LOG_ERROR);
-        } catch (FrameGrabber.Exception e) {
-            e.printStackTrace();
-        }
-
 
         StackPane root = new StackPane();
         imageView = new ImageView();
@@ -86,16 +68,10 @@ public class FFmpegMediaPlayerFX extends Stage implements StreamViewer {
 
         Scene scene = new Scene(root, grabber.getImageWidth(), grabber.getImageHeight());
 
-
-
-
         this.setTitle("Video: "+ media.getSource());
         this.setScene(scene);
-        this.setOnCloseRequest(event -> {
-            this.close();
-        });
+        this.setOnCloseRequest(event -> this.close());
         this.show();
-
     }
 
     @Override
@@ -249,6 +225,11 @@ public class FFmpegMediaPlayerFX extends Stage implements StreamViewer {
 
     @Override
     public void setVolume(int volume) {
+
+    }
+
+    @Override
+    public void visible() {
 
     }
 }

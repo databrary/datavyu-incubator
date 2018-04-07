@@ -1,5 +1,7 @@
 package org.datavyu.mediaplayers.ffmpeg;
 
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.datavyu.madias.DatavyuMedia;
 import org.datavyu.mediaplayers.StreamViewer;
@@ -10,16 +12,25 @@ import org.datavyu.util.Rate;
 /**
  * This the JavaFX version of the FFmpeg Media Player
  */
-public class FFmpegMediaPlayer implements StreamViewer {
+public class FFmpegMediaPlayer extends Stage implements StreamViewer {
 
     private final Identifier identifier;
     private final DatavyuMedia media;
-    private FFmpegMoviePlayer mp;
+    private FFmpegMoviePlayer mp; //FFmpegMoviePlayer extends StackPane
 
-    private FFmpegMediaPlayer(Identifier identifier, DatavyuMedia media) {
+
+    public FFmpegMediaPlayer(Identifier identifier, DatavyuMedia media) {
         this.identifier = identifier;
         this.media = media;
+
         mp = new FFmpegMoviePlayer();
+
+        Scene scene = new Scene(mp, mp.getImageWidth(), mp.getImageHeight());
+
+        this.setTitle(media.getSource());
+        this.setScene(scene);
+        this.setOnCloseRequest(event -> this.close());
+        this.show();
     }
 
     @Override
@@ -82,12 +93,17 @@ public class FFmpegMediaPlayer implements StreamViewer {
     public void setVolume(int volume) { this.mp.setVolume(volume); }
 
     @Override
-    public void show() {
+    public void visible() {
 
     }
 
     @Override
     public void hide() {
+
+    }
+
+    @Override
+    public void close() {
 
     }
 }

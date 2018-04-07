@@ -121,8 +121,15 @@ public class FFmpegMediaPlayerSwing implements StreamViewer {
     public void setVolume(int volume) { }
 
     @Override
-    public void show() { }
+    public void visible() {
+
+    }
 
     @Override
     public void hide() { }
+
+    @Override
+    public void close() {
+
+    }
 }

@@ -7,7 +7,9 @@ import org.datavyu.util.Rate;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * This StreamViewer of the VideoController
+ */
 public class DatavyuStream implements StreamViewer {
 
     private Map<Identifier, StreamViewer> streams = new HashMap<>();
@@ -98,12 +100,17 @@ public class DatavyuStream implements StreamViewer {
     }
 
     @Override
-    public void show() {
+    public void visible() {
 
     }
 
     @Override
     public void hide() {
+
+    }
+
+    @Override
+    public void close() {
 
     }
 

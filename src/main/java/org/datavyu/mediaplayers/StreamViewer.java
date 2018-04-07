@@ -107,10 +107,15 @@ public interface StreamViewer {
     /**
      * Show the StreamViewer
      */
-    void show();
+    void visible();
 
     /**
      * Hide the StreamViewer
      */
     void hide();
+
+    /**
+     * Close and Destroy the StreamViewer
+     */
+    void close();
 }
