@@ -95,7 +95,7 @@ public interface StreamViewer {
     /**
      * Get the Audio Volume.
      */
-    void getVolume();
+    int getVolume();
 
     /**
      * Set the Audio Volume.

@@ -104,9 +104,7 @@ public class FFmpegMediaPlayerSwing implements StreamViewer {
     }
 
     @Override
-    public int getCurrentFrame() {
-        return 0;
-    }
+    public int getCurrentFrame() { return 0; }
 
     @Override
     public Rate getRate() {
@@ -114,27 +112,17 @@ public class FFmpegMediaPlayerSwing implements StreamViewer {
     }
 
     @Override
-    public void setRate(Rate rate) {
-
-    }
+    public void setRate(Rate rate) { }
 
     @Override
-    public void getVolume() {
-
-    }
+    public int getVolume() { return 0; }
 
     @Override
-    public void setVolume(int volume) {
-
-    }
+    public void setVolume(int volume) { }
 
     @Override
-    public void show() {
-
-    }
+    public void show() { }
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() { }
 }

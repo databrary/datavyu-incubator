@@ -245,9 +245,7 @@ public class FFmpegMediaPlayerFX extends Stage implements StreamViewer {
     }
 
     @Override
-    public void getVolume() {
-
-    }
+    public int getVolume() { return 0; }
 
     @Override
     public void setVolume(int volume) {
