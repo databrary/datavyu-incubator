@@ -50,7 +50,7 @@ public class DatavyuStream implements StreamViewer {
     }
 
     @Override
-    public void seek(long time) {
+    public void seekTime(long time) {
 
     }
 
@@ -70,6 +70,16 @@ public class DatavyuStream implements StreamViewer {
     }
 
     @Override
+    public void setFrameRate(float fps) {
+
+    }
+
+    @Override
+    public int getCurrentFrame() {
+        return 0;
+    }
+
+    @Override
     public Rate getRate() {
         return null;
     }
@@ -80,13 +90,36 @@ public class DatavyuStream implements StreamViewer {
     }
 
     @Override
+    public void getVolume() {
+
+    }
+
+    @Override
+    public void setVolume(int volume) {
+
+    }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void shuttle(Rate rate) {
         streams.entrySet().parallelStream().forEach((stream) -> {
             stream.getValue().shuttle(rate);
         });
     }
 
-    @Override
+    /**
+     * Add a stream, this method is specific to DatavyuStream
+     * @param stream
+     */
     public void add(StreamViewer stream){
         this.streams.put(stream.getIdentifier(),stream);
     }

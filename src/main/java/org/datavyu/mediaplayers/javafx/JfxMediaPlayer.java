@@ -80,7 +80,7 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
     }
 
     @Override
-    public void seek(long time) {
+    public void seekTime(long time) {
         if (lastSeekTime != time) {
 //            logger.info("Seeking to: " + time);
             double rate = 0;
@@ -111,6 +111,16 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
         return (float) 30;
     }
 
+    @Override
+    public void setFrameRate(float fps) {
+
+    }
+
+    @Override
+    public int getCurrentFrame() {
+        return 0;
+    }
+
     public long getDuration() {
         if (duration == -1) {
             duration = (long) mp.getTotalDuration().toMillis();
@@ -129,8 +139,13 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
     }
 
     @Override
-    public void add(StreamViewer stream) {
-        //ONLY for DatavyuStatus
+    public void getVolume() {
+
+    }
+
+    @Override
+    public void setVolume(int volume) {
+
     }
 
     @Override
