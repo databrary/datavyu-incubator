@@ -23,7 +23,7 @@ public class FFmpegMediaPlayer extends Stage implements StreamViewer {
         this.identifier = identifier;
         this.media = media;
 
-        mp = new FFmpegMoviePlayer();
+        mp = new FFmpegMoviePlayer(media);
 
         Scene scene = new Scene(mp, mp.getImageWidth(), mp.getImageHeight());
 

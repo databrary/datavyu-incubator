@@ -11,9 +11,11 @@ import java.io.File;
 
 public class jfxMedia implements DatavyuMedia {
 
+    private final File sourceFile;
     private Media media;
 
     private jfxMedia(File sourceFile){
+        this.sourceFile = sourceFile;
         this.media = new Media(sourceFile.toURI().toString());
     }
 
@@ -50,5 +52,10 @@ public class jfxMedia implements DatavyuMedia {
     public String getSource() { return this.media.getSource(); }
 
     @Override
-    public Media getMedia(){return this.media; }
+    public Media getMedia(){return this.media; }//TODO: Double check this method
+
+    @Override
+    public File getSourceFile() {
+        return this.sourceFile;
+    }
 }
