@@ -2,11 +2,19 @@ package org.datavyu.mediaplayers;
 
 
 import javafx.util.Duration;
-import org.datavyu.mediaplayers.javafx.JfxMediaPlayer;
 import org.datavyu.util.Identifier;
 import org.datavyu.util.Rate;
 
+/**
+ * The StreamViewer represents the view of the media (Media Player)
+ */
 public interface StreamViewer {
+
+    /**
+     * A unique identifier for the StreamViewer
+     *
+     * @return identifier
+     */
 
     Identifier getIdentifier();
 
@@ -53,7 +61,7 @@ public interface StreamViewer {
      *
      * @return
      */
-    long getCurrentTime();
+    double getCurrentTime();
 
     /**
      * Get the Frame Per Second
