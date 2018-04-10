@@ -152,6 +152,11 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
     }
 
     @Override
+    public void back(Duration time) {
+
+    }
+
+    @Override
     public void shuttle(Rate rate) {
         this.setRate(rate);
     }

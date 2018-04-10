@@ -1,6 +1,5 @@
 package org.datavyu.mediaplayers.ffmpeg;
 
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.bytedeco.javacv.*;
 import org.datavyu.madias.DatavyuMedia;
@@ -130,6 +129,11 @@ public class FFmpegMediaPlayerSwing implements StreamViewer {
 
     @Override
     public void close() {
+
+    }
+
+    @Override
+    public void back(Duration time) {
 
     }
 }

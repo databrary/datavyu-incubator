@@ -14,7 +14,7 @@ public class DatavyuImageGrabber {
     private FFmpegFrameGrabber grabber;
 
     private DatavyuImageGrabber(DatavyuMedia media) throws FrameGrabber.Exception {
-        grabber =FFmpegFrameGrabber.createDefault(media.getSourceFile());
+        grabber = FFmpegFrameGrabber.createDefault(media.getSourceFile());
         grabber.start();
         converter = new Java2DFrameConverter();
     }
@@ -42,5 +42,9 @@ public class DatavyuImageGrabber {
 
     public double getFrameRate() {
         return this.grabber.getFrameRate();
+    }
+
+    public Frame grab() throws FrameGrabber.Exception {
+        return grabber.grab();
     }
 }

@@ -8,21 +8,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This StreamViewer of the VideoController
+ * This StreamViewer of the VideoController, control and keep track of
+ * the StreamViewers.
  */
 public class DatavyuStream implements StreamViewer {
 
     private Map<Identifier, StreamViewer> streams = new HashMap<>();
     private Identifier identifier;
 
-    private DatavyuStream(){
-        this.identifier = Identifier.generateIdentifier();
+    private DatavyuStream(){ this.identifier = Identifier.generateIdentifier(); }
 
-    }
-
-    public static DatavyuStream getDatavyuStream(){
-        return new DatavyuStream();
-    }
+    public static DatavyuStream createDatavyuStream(){ return new DatavyuStream(); }
 
     @Override
     public Identifier getIdentifier() {
@@ -53,19 +49,33 @@ public class DatavyuStream implements StreamViewer {
 
     @Override
     public void seekTime(long time) {
-
+        streams.entrySet().parallelStream().forEach((stream) -> {
+            stream.getValue().seekTime(time);
+        });
     }
 
     @Override
-    public void jog(int direction, Duration time) {
-
+    public void jog(final int direction, final Duration time) {
+        streams.entrySet().parallelStream().forEach((stream) -> {
+            stream.getValue().jog(direction,time);
+        });
     }
 
+    /**
+     * The DatavyuStream Class, must return te Video Controller
+     * Master clock.
+     * //TODO: Write a private clock for the VideoController, and check the streams Sync
+     * @return
+     */
     @Override
     public long getCurrentTime() {
         return 0;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public float getFrameRate() {
         return 0;
@@ -96,7 +106,9 @@ public class DatavyuStream implements StreamViewer {
 
     @Override
     public void setVolume(int volume) {
-
+        streams.entrySet().parallelStream().forEach((stream) -> {
+            stream.getValue().setVolume(volume);
+        });
     }
 
     @Override
@@ -111,6 +123,11 @@ public class DatavyuStream implements StreamViewer {
 
     @Override
     public void close() {
+
+    }
+
+    @Override
+    public void back(Duration time) {
 
     }
 

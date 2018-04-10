@@ -1,6 +1,7 @@
 package org.datavyu.views;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,7 +33,7 @@ public class VideoController extends Application{
         this.primaryStage = primaryStage;
 
         // Initialize the DatavyuStream (MainStream)
-        this.mainStream = DatavyuStream.getDatavyuStream();
+        this.mainStream = DatavyuStream.createDatavyuStream();
 
         initVideoControllerScene();
 
@@ -42,25 +43,65 @@ public class VideoController extends Application{
         this.primaryStage.show();
     }
 
-    private void initVideoControllerScene() {
-
-        GridPane controllerkeyPad = new GridPane();
-        controllerkeyPadInit(controllerkeyPad);
-
-        //TODO: start with a simple slider just to control the stream
-        VBox mixerContoller = new VBox();
-        mixerContollerInit(mixerContoller);
-
-        HBox videoControllerVbox = new HBox(controllerkeyPad,mixerContoller);
-
-        this.controllerScene = new Scene(videoControllerVbox);
-
-        this.controllerScene.getStylesheets().add("DatavyuView.css");
-    }
-
     public void setRate(Rate newRate) { this.currentRate = newRate; }
 
     public Rate getRate() { return this.currentRate; }
+
+    /**
+     * //TODO: Be consistent with the time (Duration, long or double)
+     * @param direction
+     * @param time
+     */
+    private void jogStreams(int direction, Duration time) {
+        //TODO: Need to implement the jog feature
+        this.mainStream.jog(direction, time);
+    }
+
+    private void shuttleStreams(final int direction) {
+        if(direction == +1){
+            System.out.println("Actual Rate: " +currentRate+ " Next Rate: "+currentRate.next());
+            this.currentRate = currentRate.next();
+            this.mainStream.shuttle(currentRate);
+        }
+        if(direction == -1){
+            System.out.println("Actual Rate: " +currentRate+ " Next Rate: "+currentRate.previous());
+            this.currentRate = currentRate.previous();
+            this.mainStream.shuttle(currentRate);
+        }
+    }
+
+    private void pauseStreams() {
+        //Keep the current state of the Rate
+        this.mainStream.pause();
+    }
+
+    private void playStreams() {
+        //Always Play at X1
+        this.mainStream.play();
+    }
+
+    private void stopStreams(){
+        //Set the rate to X0
+        this.mainStream.stop();
+    }
+
+    private void backStream(final Duration time) {
+        this.mainStream.back(time);
+    }
+
+    private void openStreams() {
+        //TODO: add a File Chooser Filter
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open A Video");
+        File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
+        if (selectedFile != null) {
+            //the MainStream represent the MainClock
+            //TODO: add a new stream according to the selected plugin
+//            this.mainStream.add(new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
+//            mainStream.add(new FFmpegMediaPlayerSwing(Identifier.generateIdentifier(), null));
+            mainStream.add(new FFmpegMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
+        }
+    }
 
     private void mixerContollerInit(VBox mixerContoller) {
 
@@ -195,17 +236,21 @@ public class VideoController extends Application{
         });
         jogFButton.setOnAction(event -> {
             // Jog Forward Media (+1)
+            //TODO: Jog by frame and not time, and get the number of frame from the textfield
             this.jogStreams(+1, Duration.ONE);
         });
         jogBButton.setOnAction(event -> {
             // Jog Backward Media (-1)
+            //TODO: Jog by frame and not time, and get the number of frame from the textfield
             this.jogStreams(-1, Duration.ONE);
         });
         onsetButton.setOnAction(event -> {
             // Set Cell onset
+            //TODO: hook it to the Spreadsheet
         });
         offsetButton.setOnAction(event -> {
             // set Cell Offset
+            //TODO: hook it to the Spreadsheet
         });
         pointCellbutton.setOnAction(event -> {
 
@@ -214,16 +259,17 @@ public class VideoController extends Application{
 
         });
         backButton.setOnAction(event -> {
-
+            //TODO: Back by time, and get the time from the textfield
+            this.backStream(Duration.ONE);
         });
         findButton.setOnAction(event -> {
-
+            //TODO: hook it to the Spreadsheet
         });
         newCellButton.setOnAction(event -> {
-
+            //TODO: hook it to the Spreadsheet
         });
         newCellPrevOffsetbutton.setOnAction(event -> {
-
+            //TODO: hook it to the Spreadsheet
         });
 
         pane.add(mediaTime, 2, 0, 3, 1);
@@ -249,73 +295,31 @@ public class VideoController extends Application{
         pane.add(offsetBox, 5, 6);
     }
 
-    private void openStreams() {
-        //TODO: add a File Chooser Filter
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open A Video");
-        File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
-        if (selectedFile != null) {
-            //the MainStream represent the MainClock
-            //TODO: add a new stream according to the selected plugin
-//            this.mainStream.add(new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
-//            mainStream.add(new FFmpegMediaPlayerSwing(Identifier.generateIdentifier(), null));
-            mainStream.add(new FFmpegMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
-        }
+    private void initVideoControllerScene() {
+        primaryStage.setOnCloseRequest(event -> Platform.exit());
+
+        GridPane controllerkeyPad = new GridPane();
+        controllerkeyPadInit(controllerkeyPad);
+
+        //TODO: start with a simple slider just to control the stream
+        VBox mixerContoller = new VBox();
+        mixerContollerInit(mixerContoller);
+
+        HBox videoControllerVbox = new HBox(controllerkeyPad,mixerContoller);
+
+        this.controllerScene = new Scene(videoControllerVbox);
+
+        this.controllerScene.getStylesheets().add("DatavyuView.css");
     }
 
-    private void jogStreams(int direction, Duration time) {
-        //TODO: Need to implement the jog feature
-    }
-
-    private void shuttleStreams(final int direction) {
-        if( direction == +1){
-            this.currentRate = currentRate.next();
-            this.mainStream.shuttle(currentRate.next());
-        }
-        if( direction == -1){
-            this.currentRate = currentRate.previous();
-            this.mainStream.shuttle(currentRate.previous());
-        }
-    }
-
-    private void pauseStreams() {
-        //Keep the current state of the Rate
-        this.mainStream.pause();
-    }
-
-    private void playStreams() {
-        //Always Play at X1
-        this.mainStream.play();
-    }
-
-    void stopStreams(){
-        //Set the rate to X0
-        this.mainStream.stop();
-    }
-
-    protected void updateValues() {
-        if (mainClockTimeLabel != null){
-
-        }
-        if (streamClockTimeLabel != null) {
-
-        }
-    }
     private DatavyuStream mainStream;
-
     private Stage primaryStage;
-
     private Scene controllerScene;
-
     private TextField startRegionTextField;
     private TextField endRegionTextField;
-
     private Slider mainClockSlider;
     private Slider streamSlider;
-
     private Label mainClockTimeLabel;
     private Label streamClockTimeLabel;
-
-    private Rate currentRate = Rate.stopRate();
-
+    private Rate currentRate = Rate.playRate();
 }

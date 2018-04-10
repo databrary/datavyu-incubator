@@ -232,4 +232,9 @@ public class FFmpegMediaPlayerFX extends Stage implements StreamViewer {
     public void visible() {
 
     }
+
+    @Override
+    public void back(Duration time) {
+
+    }
 }

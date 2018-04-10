@@ -17,6 +17,7 @@ public class FFmpegMediaPlayer extends Stage implements StreamViewer {
     private final Identifier identifier;
     private final DatavyuMedia media;
     private FFmpegMoviePlayer mp; //FFmpegMoviePlayer extends StackPane
+    private Rate rate = Rate.stopRate(); // Start at 0X
 
 
     public FFmpegMediaPlayer(Identifier identifier, DatavyuMedia media) {
@@ -52,7 +53,8 @@ public class FFmpegMediaPlayer extends Stage implements StreamViewer {
 
     @Override
     public void shuttle(Rate rate) {
-
+        this.setRate(rate);
+        this.mp.shuttle(rate);
     }
 
     @Override
@@ -72,19 +74,13 @@ public class FFmpegMediaPlayer extends Stage implements StreamViewer {
     }
 
     @Override
-    public int getCurrentFrame() {
-        return this.mp.getCurrentFrame();
-    }
+    public int getCurrentFrame() { return this.mp.getCurrentFrame(); }
 
     @Override
-    public Rate getRate() {
-        return null;
-    }
+    public Rate getRate() { return this.rate; }
 
     @Override
-    public void setRate(Rate rate) {
-
-    }
+    public void setRate(Rate rate) { this.rate = rate; }
 
     @Override
     public int getVolume() { return this.mp.getVolume(); }
@@ -93,17 +89,17 @@ public class FFmpegMediaPlayer extends Stage implements StreamViewer {
     public void setVolume(int volume) { this.mp.setVolume(volume); }
 
     @Override
-    public void visible() {
-
-    }
+    public void visible() { super.show(); }
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() { super.hide(); }
 
     @Override
     public void close() {
+    }
+
+    @Override
+    public void back(Duration time) {
 
     }
 }

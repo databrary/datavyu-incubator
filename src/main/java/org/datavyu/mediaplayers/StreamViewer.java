@@ -61,7 +61,7 @@ public interface StreamViewer {
      *
      * @return
      */
-    double getCurrentTime();
+    long getCurrentTime();
 
     /**
      * Get the Frame Per Second
@@ -126,4 +126,10 @@ public interface StreamViewer {
      * Close and Destroy the StreamViewer
      */
     void close();
+
+    /**
+     *
+     * @param time
+     */
+    void back(Duration time);
 }
