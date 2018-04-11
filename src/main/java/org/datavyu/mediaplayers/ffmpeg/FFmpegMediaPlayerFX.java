@@ -5,6 +5,7 @@ package org.datavyu.mediaplayers.ffmpeg;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -72,6 +73,11 @@ public class FFmpegMediaPlayerFX extends Stage implements StreamViewer {
         this.setScene(scene);
         this.setOnCloseRequest(event -> this.close());
         this.show();
+    }
+
+    @Override
+    public Slider getStreamTimeSlider() {
+        return null;
     }
 
     @Override

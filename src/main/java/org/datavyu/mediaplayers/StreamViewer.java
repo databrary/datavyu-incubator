@@ -1,6 +1,7 @@
 package org.datavyu.mediaplayers;
 
 
+import javafx.scene.control.Slider;
 import javafx.util.Duration;
 import org.datavyu.util.Identifier;
 import org.datavyu.util.Rate;
@@ -9,6 +10,8 @@ import org.datavyu.util.Rate;
  * The StreamViewer represents the view of the media (Media Player)
  */
 public interface StreamViewer {
+
+    Slider getStreamTimeSlider();
 
     /**
      * A unique identifier for the StreamViewer

@@ -1,5 +1,6 @@
 package org.datavyu.mediaplayers.ffmpeg;
 
+import javafx.scene.control.Slider;
 import javafx.util.Duration;
 import org.bytedeco.javacv.*;
 import org.datavyu.madias.DatavyuMedia;
@@ -38,6 +39,11 @@ public class FFmpegMediaPlayerSwing implements StreamViewer {
     }
 
     @Override
+    public Slider getStreamTimeSlider() {
+        return null;
+    }
+
+    @Override
     public Identifier getIdentifier() {
         return this.identifier;
     }
@@ -52,15 +58,10 @@ public class FFmpegMediaPlayerSwing implements StreamViewer {
         } catch (FrameGrabber.Exception e) {
             e.printStackTrace();
         }
-//        catch (FrameRecorder.Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
-    public void pause() {
-
-    }
+    public void pause() {  }
 
     @Override
     public void stop() {
@@ -73,24 +74,16 @@ public class FFmpegMediaPlayerSwing implements StreamViewer {
     }
 
     @Override
-    public void seekTime(long time) {
-
-    }
+    public void seekTime(long time) {  }
 
     @Override
-    public void shuttle(Rate rate) {
-
-    }
+    public void shuttle(Rate rate) {  }
 
     @Override
-    public void jog(int direction, Duration time) {
-
-    }
+    public void jog(int direction, Duration time) {  }
 
     @Override
-    public long getCurrentTime() {
-        return 0;
-    }
+    public long getCurrentTime() { return 0; }
 
     @Override
     public float getFrameRate() {
@@ -98,9 +91,7 @@ public class FFmpegMediaPlayerSwing implements StreamViewer {
     }
 
     @Override
-    public void setFrameRate(float fps) {
-
-    }
+    public void setFrameRate(float fps) { }
 
     @Override
     public int getCurrentFrame() { return 0; }

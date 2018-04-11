@@ -2,6 +2,8 @@ package org.datavyu.views;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,10 +19,13 @@ import javafx.util.Duration;
 import org.datavyu.madias.javafx.jfxMedia;
 import org.datavyu.mediaplayers.DatavyuStream;
 import org.datavyu.mediaplayers.ffmpeg.FFmpegMediaPlayer;
+import org.datavyu.util.Converter;
 import org.datavyu.util.Identifier;
 import org.datavyu.util.Rate;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.util.concurrent.TimeUnit;
 
 public class VideoController extends Application{
 
@@ -98,39 +103,52 @@ public class VideoController extends Application{
             //the MainStream represent the MainClock
             //TODO: add a new stream according to the selected plugin
 //            this.mainStream.add(new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
-//            mainStream.add(new FFmpegMediaPlayerSwing(Identifier.generateIdentifier(), null));
-            mainStream.add(new FFmpegMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
+            FFmpegMediaPlayer ffmpegMediaPlayer = FFmpegMediaPlayer.createFFmpegMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile));
+            mainStream.add(ffmpegMediaPlayer);
+            addSliderToMixer(ffmpegMediaPlayer.getStreamTimeSlider(), ffmpegMediaPlayer.getIdentifier(), " FFmpeg ");
         }
     }
 
-    private void mixerContollerInit(VBox mixerContoller) {
+    private void addSliderToMixer(Slider streamTimeSlider, Identifier identifier, String label) {
+        Label streamClockLabel = new Label(label + " " + identifier.toString() + " :");
+        Label streamClockTimeLabel =  new Label("00:00:00:000");
+        Slider streamSlider =  streamTimeSlider;
+        streamSlider.valueProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                if(streamSlider.isValueChanging()){
+                    streamClockTimeLabel.setText(Converter.convertMStoTimestamp((long) streamSlider.getValue()));
+                }
+            }
+        });
+        HBox streamHBox = new HBox(streamClockLabel, streamClockTimeLabel, streamSlider);
+        streamHBox.setId("stream-clock-hbox");
+
+        mixerContoller.getChildren().add(streamHBox);
+    }
+
+    private void mixerContollerInit() {
 
         mixerContoller.setId("mixer-controller");
 
         Label startRegionLabel =  new Label("Start Region: ");
-        startRegionTextField =  new TextField("00:00:00:000");
+        TextField startRegionTextField =  new TextField("00:00:00:000");
         HBox startRegionHBox = new HBox(startRegionLabel,startRegionTextField);
 
         Label endRegionLabel =  new Label("End Region: ");
-        endRegionTextField =  new TextField("00:00:00:000");
+        TextField endRegionTextField =  new TextField("00:00:00:000");
         HBox endRegionHBox = new HBox(endRegionLabel,endRegionTextField);
 
         HBox regionHBox = new HBox(startRegionHBox,endRegionHBox);
 
         Label mainClockLabel = new Label("Main Clock: ");
-        mainClockTimeLabel =  new Label("00:00:00:000");
-        mainClockSlider =  new Slider();
+        Label mainClockTimeLabel =  new Label("00:00:00:000");
+        Slider mainClockSlider =  new Slider();
         HBox mainClockHBox = new HBox(mainClockLabel, mainClockTimeLabel, mainClockSlider);
         mainClockHBox.setId("main-clock-hbox");
 
-        Label streamClockLabel = new Label("Stream Clock: ");
-        streamClockTimeLabel =  new Label("00:00:00:000");
-        streamSlider =  new Slider();
-        HBox streamHBox = new HBox(streamClockLabel, streamClockTimeLabel, streamSlider);
-        streamHBox.setId("stream-clock-hbox");
 
-
-        mixerContoller.getChildren().addAll(regionHBox, mainClockHBox,streamHBox);
+        mixerContoller.getChildren().addAll(regionHBox, mainClockHBox);
 
     }
 
@@ -302,8 +320,8 @@ public class VideoController extends Application{
         controllerkeyPadInit(controllerkeyPad);
 
         //TODO: start with a simple slider just to control the stream
-        VBox mixerContoller = new VBox();
-        mixerContollerInit(mixerContoller);
+        mixerContoller = new VBox();
+        mixerContollerInit();
 
         HBox videoControllerVbox = new HBox(controllerkeyPad,mixerContoller);
 
@@ -312,14 +330,9 @@ public class VideoController extends Application{
         this.controllerScene.getStylesheets().add("DatavyuView.css");
     }
 
+    private VBox mixerContoller;
     private DatavyuStream mainStream;
     private Stage primaryStage;
     private Scene controllerScene;
-    private TextField startRegionTextField;
-    private TextField endRegionTextField;
-    private Slider mainClockSlider;
-    private Slider streamSlider;
-    private Label mainClockTimeLabel;
-    private Label streamClockTimeLabel;
     private Rate currentRate = Rate.playRate();
 }

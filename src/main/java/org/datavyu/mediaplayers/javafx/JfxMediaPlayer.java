@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Scene;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -61,6 +62,11 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
     }
 
     public StreamViewer getStreamViewer(){ return this; }
+
+    @Override
+    public Slider getStreamTimeSlider() {
+        return null;
+    }
 
     @Override
     public Identifier getIdentifier() { return this.identifier; }

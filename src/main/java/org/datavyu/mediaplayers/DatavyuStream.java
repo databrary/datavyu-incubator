@@ -1,5 +1,6 @@
 package org.datavyu.mediaplayers;
 
+import javafx.scene.control.Slider;
 import javafx.util.Duration;
 import org.datavyu.util.Identifier;
 import org.datavyu.util.Rate;
@@ -19,6 +20,11 @@ public class DatavyuStream implements StreamViewer {
     private DatavyuStream(){ this.identifier = Identifier.generateIdentifier(); }
 
     public static DatavyuStream createDatavyuStream(){ return new DatavyuStream(); }
+
+    @Override
+    public Slider getStreamTimeSlider() {
+        return null;
+    }
 
     @Override
     public Identifier getIdentifier() {
@@ -146,4 +152,7 @@ public class DatavyuStream implements StreamViewer {
         this.streams.put(stream.getIdentifier(),stream);
     }
 
+    public Map<Identifier, StreamViewer> getStreams() {
+        return streams;
+    }
 }
