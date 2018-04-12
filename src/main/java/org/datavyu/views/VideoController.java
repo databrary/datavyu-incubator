@@ -105,22 +105,14 @@ public class VideoController extends Application{
 //            this.mainStream.add(new JfxMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile)));
             FFmpegMediaPlayer ffmpegMediaPlayer = FFmpegMediaPlayer.createFFmpegMediaPlayer(Identifier.generateIdentifier(), jfxMedia.getMedia(selectedFile));
             mainStream.add(ffmpegMediaPlayer);
-            addSliderToMixer(ffmpegMediaPlayer.getStreamTimeSlider(), ffmpegMediaPlayer.getIdentifier(), " FFmpeg ");
+            addSliderToMixer(ffmpegMediaPlayer.getStreamTimeSlider() ,ffmpegMediaPlayer.getTimeStampTextField() ,ffmpegMediaPlayer.getIdentifier(), " FFmpeg ");
         }
     }
 
-    private void addSliderToMixer(Slider streamTimeSlider, Identifier identifier, String label) {
+    private void addSliderToMixer(Slider streamTimeSlider, Label timeStampTextField, Identifier identifier, String label) {
         Label streamClockLabel = new Label(label + " " + identifier.toString() + " :");
-        Label streamClockTimeLabel =  new Label("00:00:00:000");
+        Label streamClockTimeLabel =  timeStampTextField;
         Slider streamSlider =  streamTimeSlider;
-        streamSlider.valueProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                if(streamSlider.isValueChanging()){
-                    streamClockTimeLabel.setText(Converter.convertMStoTimestamp((long) streamSlider.getValue()));
-                }
-            }
-        });
         HBox streamHBox = new HBox(streamClockLabel, streamClockTimeLabel, streamSlider);
         streamHBox.setId("stream-clock-hbox");
 

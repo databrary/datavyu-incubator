@@ -3,6 +3,7 @@ package org.datavyu.mediaplayers.ffmpeg;
 
 
 import javafx.application.Platform;
+import javafx.beans.property.LongProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
@@ -217,6 +218,11 @@ public class FFmpegMediaPlayerFX extends Stage implements StreamViewer {
     }
 
     @Override
+    public LongProperty currentTimeProperty() {
+        return null;
+    }
+
+    @Override
     public Rate getRate() {
         return null;
     }
@@ -242,5 +248,10 @@ public class FFmpegMediaPlayerFX extends Stage implements StreamViewer {
     @Override
     public void back(Duration time) {
 
+    }
+
+    @Override
+    public long getDuration() {
+        return 0;
     }
 }

@@ -1,10 +1,11 @@
 package org.datavyu.mediaplayers.ffmpeg;
 
+import com.google.common.base.Stopwatch;
 import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -36,7 +37,7 @@ public class FFmpegMoviePlayer extends StackPane {
     private Rate rate = Rate.playRate();
     private Clock clock;
     private ScheduledExecutorService imageTimer;
-    private DatavyuStatus streamStatus;
+    private ObjectProperty<DatavyuStatus> streamStatus;
     private int cpt = 0;
     Frame grabbedImage;
 
@@ -45,40 +46,40 @@ public class FFmpegMoviePlayer extends StackPane {
      * @param media
      */
     public FFmpegMoviePlayer(DatavyuMedia media) {
-        streamStatus = DatavyuStatus.UNKNOWN;
+        this.streamStatus = new SimpleObjectProperty<>(DatavyuStatus.UNKNOWN);
+        this.clock = new Clock();
+
+        this.streamStatus.addListener(observable -> clock.updateClockStatus());
         try {
             //Start buffering the Audio and Images and wait for the consumer to start
             audioGrabber = DatavyuAudioGrabber.createAudioGrabber(media);
             imageGrabber = DatavyuImageGrabber.createImageGrabber(media);
         } catch (FrameGrabber.Exception e) {
-            streamStatus = DatavyuStatus.STALLED;
+
             e.printStackTrace();
         }
 
-        currentTime = new SimpleLongProperty();
-        currentTime.setValue(0);
-        converter = new Java2DFrameConverter();
-        streamStatus = DatavyuStatus.READY;
-        imageView = new ImageView();
-        imageView.fitWidthProperty().bind(this.widthProperty());
-        imageView.fitHeightProperty().bind(this.heightProperty());
-        this.getChildren().add(imageView);
+        this.currentTime = new SimpleLongProperty();
 
-        clock = new Clock();
+        this.currentTime.bind(this.clock.timeStampProperty());
+
+
+        this.converter = new Java2DFrameConverter();
+        this.streamStatus.setValue(DatavyuStatus.READY);
+        this.imageView = new ImageView();
+        this.imageView.fitWidthProperty().bind(this.widthProperty());
+        this.imageView.fitHeightProperty().bind(this.heightProperty());
+        this.getChildren().add(imageView);
 
         av_log_set_level(AV_LOG_ERROR);
     }
 
     public void play() {
-        if (streamStatus != DatavyuStatus.PLAYING
-                && streamStatus != DatavyuStatus.UNKNOWN
-                && streamStatus != DatavyuStatus.STALLED) {
-
-            this.streamStatus = DatavyuStatus.PLAYING;
-            clock.start();
+        if (!this.streamStatus.getValue().equals(DatavyuStatus.PLAYING)) {
             play = () -> {
-                try {
-                    if (streamStatus == DatavyuStatus.PLAYING){
+            this.streamStatus.setValue(DatavyuStatus.PLAYING);
+                while (this.streamStatus.getValue().equals(DatavyuStatus.PLAYING)){
+                    try {
                         grabbedImage = imageGrabber.grab();
 //                        System.out.println("Frame # " + cpt + " Time Clock: "+ Converter.convertMStoTimestamp(currentTime.getValue()) + " Frame stamp: " + Converter.convertMStoTimestamp(grabbedImage.timestamp/1000));
 ////                        Frame grabbedImage = imageGrabber.grab();
@@ -118,19 +119,20 @@ public class FFmpegMoviePlayer extends StackPane {
                                 imageView.setImage(imageGrabber.convert(grabbedImage));
 //                                imageView.setImage(imageGrabber.convert(grabbedImage));
 
+                                clock.updateElapsedTime();
                             });
                         }
+                        System.out.println("Index: " + cpt + " Main Clock: " + Converter.convertMStoTimestamp(this.currentTime.get()) + " Grabber Timestamp: " + Converter.convertMStoTimestamp(grabbedImage.timestamp/1000));
                         cpt++;
+
+                    } catch (FrameGrabber.Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (FrameGrabber.Exception e) {
-                    e.printStackTrace();
                 }
             };
-
-//
             this.imageTimer = Executors.newSingleThreadScheduledExecutor();
 //            //This at 1X for the
-            this.imageTimer.scheduleAtFixedRate(play, 0, (long) (1000/(imageGrabber.getFrameRate())), TimeUnit.MILLISECONDS);
+            this.imageTimer.scheduleAtFixedRate(play, 0, 33, TimeUnit.MILLISECONDS);
 //          this.timer.scheduleAtFixedRate(playThread, 0, (long) ((grabber.getFrameRate()*grabber.getLengthInFrames())/grabber.getLengthInAudioFrames()), TimeUnit.MILLISECONDS);
 
         }
@@ -138,14 +140,12 @@ public class FFmpegMoviePlayer extends StackPane {
     }
 
     public void pause() {
-        streamStatus = DatavyuStatus.PAUSED;
+        this.streamStatus.setValue(DatavyuStatus.PAUSED);
         this.imageTimer.shutdown();
     }
 
     public void stop() {
-        if (streamStatus == DatavyuStatus.PLAYING
-                || streamStatus == DatavyuStatus.PAUSED) {
-            streamStatus = DatavyuStatus.STOPPED;
+        this.streamStatus.setValue(DatavyuStatus.STOPPED);
             try {
                 this.imageTimer.shutdownNow();
                 //TODO the image grabber should listen to the clock
@@ -153,8 +153,7 @@ public class FFmpegMoviePlayer extends StackPane {
             } catch (FrameGrabber.Exception e) {
                 e.printStackTrace();
             }
-        }
-    }
+     }
 
     public LongProperty currentTimeProperty() {
         return currentTime;
@@ -205,77 +204,70 @@ public class FFmpegMoviePlayer extends StackPane {
 
     private class Clock{
         /** Clock tick period in milliseconds */
-        private static final long CLOCK_SYNC_INTERVAL = 1000L;
+        private static final long CLOCK_SYNC_INTERVAL = 10L;
 
         /** Clock initial delay in milliseconds */
         private static final long CLOCK_SYNC_DELAY = 0L;
 
-        /** Convert nanoseconds to milliseconds */
-        private static final long NANO_IN_MILLI = 1000000L;
-        private final ScheduledExecutorService clockTimer;
-
-        /** Last time in nanoseconds; it is used to calculate the elapsed */
-        private long lastTime;
+        private ScheduledExecutorService clockTimer;
+        private LongProperty timeStampP;
+        private Stopwatch stopwatch;
 
         Clock(){
-            currentTime.setValue(0);
+            this.stopwatch = Stopwatch.createUnstarted();
+            this.timeStampP = new SimpleLongProperty(0);
 
-            clockTimer =  Executors.newScheduledThreadPool(2);
-
-            //Execute Concurrently Status update update elapsed time
-
-            clockTimer.scheduleAtFixedRate(() -> {
-                updateClockStatus();} ,CLOCK_SYNC_DELAY,CLOCK_SYNC_INTERVAL,TimeUnit.MILLISECONDS);
-            clockTimer.scheduleAtFixedRate(() -> {
-                updateElapsedTime();} ,CLOCK_SYNC_DELAY,10,TimeUnit.MILLISECONDS);
+//            this.clockTimer =  Executors.newSingleThreadScheduledExecutor();
+//
+//            //Execute Concurrently Status update update elapsed time
+//
+//            this.clockTimer.scheduleAtFixedRate(() -> updateElapsedTime()
+//                , CLOCK_SYNC_DELAY, CLOCK_SYNC_INTERVAL, TimeUnit.MILLISECONDS);
         }
 
         /**
          * change the state of the clock according to the StreamViewer Status
          * get executed simultaneously with update elapsed time
          */
-        private synchronized void updateClockStatus() {
-            if(streamStatus == DatavyuStatus.PLAYING){
-                this.start();
-//                System.out.println("Frame # " + cpt + " Time Clock: "+ Converter.convertMStoTimestamp(currentTime.getValue()));
+        synchronized void updateClockStatus() {
+            if(streamStatus.getValue().equals(DatavyuStatus.PLAYING)){
+                if(!this.stopwatch.isRunning()){
+                    System.out.println("Clock Started !");
+                    this.start();
+                }
             }
-            if(streamStatus == DatavyuStatus.PAUSED){
-                this.pause();
+            if(streamStatus.getValue().equals(DatavyuStatus.PAUSED)){
+                if(this.stopwatch.isRunning()){
+                    System.out.println("Clock Paused !");
+                    this.pause();
+                }
             }
-            if(streamStatus == DatavyuStatus.STOPPED){
-                this.stop();
+            if(streamStatus.getValue().equals(DatavyuStatus.STOPPED)){
+                if(this.stopwatch.isRunning()){
+                    System.out.println("Clock Stopped !");
+                    this.stop();
+                }
             }
         }
 
-        synchronized void start() {
-            lastTime = System.nanoTime();
-        }
+        synchronized void start() { this.stopwatch.start(); }
 
-        synchronized void stop() { currentTime.setValue(0); }
+        synchronized void stop() { this.stopwatch.reset(); }
 
-        synchronized void pause() { }
+        synchronized void pause() { this.stopwatch.stop(); }
 
-        synchronized void setRate(Rate rate){
-            updateElapsedTime();
-        }
+        synchronized void setRate(Rate rate){ updateElapsedTime(); }
 
         /**
          * Update the clock time with the elapsed time since the last update (ONLY WHEN the STATUS is PLAYING)
          * The rate will affect the elapsed time jumps and we can use the jumps to make the play thread according to the rate
          * TODO: Affect the rate and change the executor fixed rate or make the thread sleep
          */
-        private synchronized void updateElapsedTime() {
-            long newTime = System.nanoTime();
-            if(streamStatus == DatavyuStatus.PLAYING){
-                System.out.println("Yes I am playing");
-
-                currentTime.setValue((long) (currentTime.getValue() + rate.getValue() * (newTime - lastTime) / NANO_IN_MILLI));
-//                System.out.println("Current Time: " + currentTime.getValue() + " Timestamp: " + Converter.convertMStoTimestamp(currentTime.getValue()));
-                System.out.println("Frame # " + cpt + " Time Clock: "+ Converter.convertMStoTimestamp(currentTime.getValue()) + " Frame stamp: " + Converter.convertMStoTimestamp(grabbedImage.timestamp/1000));
-//                System.out.println("Frame # " + cpt + " Time Clock: "+ Converter.convertMStoTimestamp(currentTime.getValue()));
-            }
-            lastTime = newTime;
+        synchronized void updateElapsedTime() {
+            this.timeStampP.setValue(rate.getValue() * this.stopwatch.elapsed(TimeUnit.MILLISECONDS));
         }
+        
+        LongProperty timeStampProperty() { return this.timeStampP; }
 
     }
 }

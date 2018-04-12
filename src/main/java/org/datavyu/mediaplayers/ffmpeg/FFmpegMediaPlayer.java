@@ -1,8 +1,12 @@
 package org.datavyu.mediaplayers.ffmpeg;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.LongProperty;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.datavyu.madias.DatavyuMedia;
@@ -10,6 +14,8 @@ import org.datavyu.mediaplayers.StreamViewer;
 import org.datavyu.util.Converter;
 import org.datavyu.util.Identifier;
 import org.datavyu.util.Rate;
+
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -21,22 +27,28 @@ public class FFmpegMediaPlayer extends Stage implements StreamViewer {
     private DatavyuMedia media;
     private FFmpegMoviePlayer mp; //FFmpegMoviePlayer extends StackPane
     private Slider timeSlider;
+    private Label timeStampTextField;
 
 
     private FFmpegMediaPlayer(Identifier identifier, DatavyuMedia media) {
         this.identifier = identifier;
         this.media = media;
 
-        mp = new FFmpegMoviePlayer(media);
 
-        Scene scene = new Scene(mp, mp.getImageWidth(), mp.getImageHeight());
 
-        System.out.println(" Time: " + mp.getDuration() + " TimeStamp: "+ Converter.convertMStoTimestamp(mp.getDuration()/1000));
-        timeSlider =  new Slider(0, mp.getDuration(),0);
-        timeSlider.setMajorTickUnit(100000);
-        timeSlider.setShowTickMarks(true);
+        this.mp = new FFmpegMoviePlayer(media);
 
-//        timeSlider.valueProperty().bindBidirectional(mp.currentTimeProperty());
+        Scene scene = new Scene(this.mp, this.mp.getImageWidth(), this.mp.getImageHeight());
+
+        System.out.println(" Time: " + this.mp.getDuration() + " TimeStamp: "+ Converter.convertMStoTimestamp(this.mp.getDuration()/1000));
+        this.timeSlider =  new Slider(0, (this.getDuration()/1000),0);
+        this.timeSlider.setMajorTickUnit(100000);
+        this.timeSlider.setShowTickMarks(true);
+        this.timeSlider.valueProperty().bind(this.currentTimeProperty());
+        this.timeStampTextField =  new Label();
+        this.timeStampTextField.textProperty().bind(currentTimeProperty().asString());
+
+//        this.timeSlider.valueProperty().bindBidirectional(mp.currentTimeProperty());
 
         this.setTitle(media.getSource());
         this.setScene(scene);
@@ -49,7 +61,9 @@ public class FFmpegMediaPlayer extends Stage implements StreamViewer {
     }
 
     @Override
-    public Slider getStreamTimeSlider() { return timeSlider; }
+    public Slider getStreamTimeSlider() { return this.timeSlider; }
+
+    public Label getTimeStampTextField() { return this.timeStampTextField; }
 
     @Override
     public Identifier getIdentifier() { return this.identifier; }
@@ -74,6 +88,9 @@ public class FFmpegMediaPlayer extends Stage implements StreamViewer {
 
     @Override
     public long getCurrentTime() { return this.mp.currentTimeProperty().getValue(); }
+
+    @Override
+    public LongProperty currentTimeProperty() { return this.mp.currentTimeProperty(); }
 
     @Override
     public Rate getRate() { return this.mp.getRate(); }
@@ -110,4 +127,8 @@ public class FFmpegMediaPlayer extends Stage implements StreamViewer {
 
     @Override
     public int getCurrentFrame() { return this.mp.getCurrentFrame(); }
+
+    @Override
+    public long getDuration() { return this.mp.getDuration(); }
+
 }

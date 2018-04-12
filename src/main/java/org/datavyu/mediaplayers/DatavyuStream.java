@@ -1,5 +1,6 @@
 package org.datavyu.mediaplayers;
 
+import javafx.beans.property.LongProperty;
 import javafx.scene.control.Slider;
 import javafx.util.Duration;
 import org.datavyu.util.Identifier;
@@ -98,6 +99,11 @@ public class DatavyuStream implements StreamViewer {
     }
 
     @Override
+    public LongProperty currentTimeProperty() {
+        return null;
+    }
+
+    @Override
     public Rate getRate() {
         return null;
     }
@@ -135,6 +141,11 @@ public class DatavyuStream implements StreamViewer {
     @Override
     public void back(Duration time) {
 
+    }
+
+    @Override
+    public long getDuration() {
+        return 0;
     }
 
     @Override

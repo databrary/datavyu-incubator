@@ -42,7 +42,7 @@ public class DatavyuImageGrabber {
 
     public double getFrameRate() { return this.grabber.getFrameRate(); }
 
-    public Frame grab() throws FrameGrabber.Exception { return this.grabber.grabImage(); }
+    public Frame grab() throws FrameGrabber.Exception { return this.grabber.grab(); }
 
     public long getDuration() { return this.grabber.getLengthInTime(); }
 

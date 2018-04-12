@@ -3,6 +3,7 @@ package org.datavyu.mediaplayers.javafx;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.LongProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.StackPane;
@@ -125,6 +126,11 @@ public class JfxMediaPlayer extends Stage implements StreamViewer{
     @Override
     public int getCurrentFrame() {
         return 0;
+    }
+
+    @Override
+    public LongProperty currentTimeProperty() {
+        return null;
     }
 
     public long getDuration() {

@@ -1,6 +1,7 @@
 package org.datavyu.mediaplayers;
 
 
+import javafx.beans.property.LongProperty;
 import javafx.scene.control.Slider;
 import javafx.util.Duration;
 import org.datavyu.util.Identifier;
@@ -89,6 +90,8 @@ public interface StreamViewer {
      */
     int getCurrentFrame();
 
+    LongProperty currentTimeProperty();
+
     /**
      * Get the current Rate (Playback Speed) of the StreamViewer
      *
@@ -135,4 +138,6 @@ public interface StreamViewer {
      * @param time
      */
     void back(Duration time);
+
+    long getDuration();
 }
