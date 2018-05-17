@@ -8,5 +8,6 @@
   <name>protoypes</name>
   <modules>
     <module>spreadsheetFX</module>
+    <module>datavyuBackEnd</module>
   </modules>
 </project>
